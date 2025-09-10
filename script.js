@@ -1,3 +1,4 @@
+npm install googleapis date-fns
 new Vue({
     el: '#app',
     data: {
