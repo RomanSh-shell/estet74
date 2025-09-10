@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание и домашнее задание</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <header>
+                <h1><i class="fas fa-calendar-alt"></i> Электронный дневник</h1>
+                <div class="subtitle">Просмотр расписания и домашних заданий</div>
+            </header>
+            
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label for="group"><i class="fas fa-users"></i> Класс:</label>
+                    <select id="group" v-model="selectedGroup">
+                        <option v-for="group in GROUPS" :value="group" :key="group">
+                            {{ group }}
+                        </option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="date"><i class="fas fa-calendar-day"></i> Дата:</label>
+                    <input type="date" id="date" v-model="selectedDate">
+                </div>
+                
+                <div class="date-display">
+                    <i class="fas fa-calendar-check"></i> {{ formatDate(selectedDate) }}
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="section-title">
+                    <i class="fas fa-clock"></i> Расписание уроков и домашние задания
+                </div>
+                
+                <table class="schedule-table" v-if="filteredLessons.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Урок</th>
+                            <th>Время</th>
+                            <th>Предмет</th>
+                            <th>Кабинет</th>
+                            <th>Домашнее задание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="lesson in filteredLessons" :key="lesson.lesson">
+                            <td>{{ lesson.lesson }}</td>
+                            <td class="lesson-time">{{ lesson.time }}</td>
+                            <td>
+                                <div class="lesson-subject">{{ getStandardSubjectName(lesson.subject) }}</div>
+                                <div class="teacher-info" v-if="getTeacherBySubject(lesson.subject)">
+                                    {{ getTeacherBySubject(lesson.subject).name }}
+                                </div>
+                            </td>
+                            <td class="lesson-room">{{ lesson.room }}</td>
+                            <td>
+                                <div class="hometask" v-if="getHometaskForSubject(lesson.subject)">
+                                    {{ getHometaskForSubject(lesson.subject) }}
+                                </div>
+                                <span v-else style="color: #999; font-style: italic;">Не задано</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="no-data" v-else>
+                    <i class="fas fa-calendar-times"></i> На выбранную дату уроков нет
+                </div>
+
+                <div class="synonyms-info">
+                    <h3><i class="fas fa-language"></i> Синонимы предметов в системе:</h3>
+                    <div class="synonym-item" v-for="(synonyms, standardName) in SUBJECT_SYNONYMS" :key="standardName">
+                        <span>{{ standardName }}:</span> {{ synonyms.join(', ') }}
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>Система электронного дневника © 2024</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
