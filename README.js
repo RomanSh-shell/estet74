@@ -1,4 +1,27 @@
-//Из ячеек B2 таблиц расписания получаем текст соответствующий ДД.ММ.
+
+async function getRange(sheetConfig, range) {
+  // Пробуем API
+  try {
+    const response = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetConfig.sheetId}/values/${range}?key=${sheetConfig.apiKey}`
+    );
+    
+    if (!response.ok) throw new Error('API failed');
+      const data = await response.json();
+      return data.values;
+    
+  } catch (error) {
+    console.warn(`! Ошибка получения данных таблицы [${sheetConfig}] — неверный API, переход к обходу CORS |Получение API: https://ai2.appinventor.mit.edu/reference/other/googlesheets-api-setup.html`);
+    
+    // Fallback на CORS proxy
+    const proxy = 'https://corsproxy.io/?';
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetConfig.sheetId}/export?format=csv&gid=${sheetConfig.gid}`;
+    const response = await fetch(proxy + encodeURIComponent(csvUrl));
+    if (!response.ok) throw new Error(`!!! [${sheetConfig}]: Неверно указан API, Не удалось обойти CORS |Proxy: best-proxies.ru FineProxy.org`);
+    const csv = await response.text();
+    return csv.split('\n').map(row => row.split(','));
+  }
+//Из ячеек B2 таблиц расписания сохраняем текст соответствующий «ДД.ММ.» в массив DATES
 
 //(Пользователю предоставляется выбор дня недели DAY По умолчанию DAY приравниваем следующему дня недели, если завтра СБ или ВС или ПН, то DAY = "Вся неделя")
 
