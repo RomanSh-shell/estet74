@@ -212,6 +212,9 @@ if (elemGROUPS[0][groupIndex]) { // Если группа в elemGROUPS
     let LESSONSandROOMS = await getRange(days[`day${day}`], `${column}4:${column}15`);
 }
 
+let LESSONS = LESSONSandROOMS.map(str => str.replace(/[^a-zA-Zа-яА-Я]/g, ""));
+let ROOMS
+
 //Получаем индекс первого непустого элемента в LESSONSandROOMS, к индексу прибавляем единицу и сохраняем в firstlessonNUM. 
 let firstlessonNUM = -1;
 for (let i = 0; i < 12; i++) {
