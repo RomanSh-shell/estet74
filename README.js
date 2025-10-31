@@ -206,9 +206,9 @@ async function getRange(sheetConfig, range) {
 //---Приведение сокращений предметов к стандартному виду---//
 function normalizeSubject(subjectString) {
   const subjectMap = {
-    'Английский&nbspязык': ['Англ.яз', 'Английский', 'English', 'Анг.яз', 'Английский язык'],
+    'Английский язык': ['Англ.яз', 'Английский', 'English', 'Анг.яз'],
     'Физкультура': ['Физ-ра', 'Физическая культура', 'Физра', 'Физ-культура'],
-    'Русский&nbspязык': ['Рус.яз', 'Русский', 'Русский язык'],
+    'Русский язык': ['Рус.яз', 'Русский'],
     'Математика': ['Матем', 'Математика'],
     'Статистика': ['Вероятность и Статистика','ВиС','Вероятность', 'В', 'С'],
     'Геометрия': ['Геом', 'Г'],
@@ -243,9 +243,60 @@ function normalizeSubject(subjectString) {
   return reverseMap[lowerInput] || subjectString; // Возвращаем полное название или оригинал
 }
 
-
-
-
+//---Разделение смешанных данных---//
+function parseCompleteSubject(subjectString) {
+  const normalizedSubject = normalizeSubject(subjectString);
+  const result = { 
+    subject: normalizedSubject, 
+    room: '', 
+    metadata: '', 
+  };
+  
+  let match;
+  
+  // 1. Предмет(метаданные)кабинет - "Математика(С)3", "Информатика(лаб)столовая"
+  match = subjectString.match(/^(.+?)\(([^)]+)\)(.+)$/);
+  if (match) {
+    const rawSubject = match[1].trim();
+    result.subject = reverseMap[rawSubject.toLowerCase()] || rawSubject;
+    result.metadata = reverseMap[rawMetadata.toLowerCase()] || rawMetadata
+    result.room = match[3].trim();
+    return result;
+  }
+  
+  // 2. ПредметМетаданныекабинет - "МатемА3", "ИнформатикаПр2" (только цифровые кабинеты)
+  match = subjectString.match(/^(.+?)([А-Я]{1,3})(\d+[а-яё]?)$/);
+  if (match) {
+    const rawSubject = match[1].trim();
+    result.subject = reverseMap[rawSubject.toLowerCase()] || rawSubject;
+    result.metadata = reverseMap[rawMetadata.toLowerCase()] || rawMetadata
+    result.room = match[3].trim();
+    return result;
+  }
+  
+  // 3. Предмет.кабинет - "Математика.3", "Технология.столовая", "Информатика.с9"
+  match = subjectString.match(/^(.+)\.(.+)$/);
+  if (match) {
+    const rawSubject = match[1].trim();
+    result.subject = reverseMap[rawSubject.toLowerCase()] || rawSubject;
+    result.room = match[2].trim();
+    return result;
+  }
+  
+  // 4. ПредметКАБИНЕТ -  "Математика3", "Информатика9с"
+  match = subjectString.match(/^(.+?)(\d+[а-яё]?)$/);
+  if (match && match[1].trim() !== '') {
+    const rawSubject = match[1].trim();
+    result.subject = reverseMap[rawSubject.toLowerCase()] || rawSubject;
+    result.room = match[2].trim();
+    return result;
+  }
+  
+  // Нормализуем subject, если не нашли кабинет
+  result.subject = reverseMap[result.subject.toLowerCase()] || result.subject;
+  
+  return result;
+}
 //Получаем порядковый номер следующего дня, где понедельник = 0
 const day = ((new Date().getDay() + 6) % 7 + 1) % 7;
 
