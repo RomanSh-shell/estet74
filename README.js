@@ -136,7 +136,7 @@ function setCookie(name, value, days) {
     let expires = "";
     if (days) {
         const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        date.setTime(date.getTime() + (days * 86400000));
         expires = "; expires=" + date.toUTCString();
     }
     document.cookie = name + "=" + (value || "") + expires + "; path=/";
@@ -152,7 +152,16 @@ async function getRange(sheetConfig, range) {
     
     if (!response.ok) throw new Error(`[${sheetConfig.name}]: API failed`);
     const data = await response.json();
-    return data.values;
+    let result = data.values || [];
+
+    const rangeParts = range.split(':');
+    const isSingleColumn = rangeParts[0].charAt(0) === rangeParts[1]?.charAt(0);
+
+    if (result.length > 0 && isSingleColumn) {
+        result = result.map(row => row[0]);
+    }
+
+    return result;
     
   } catch (error) { 
     // Если получить по API не получилось, переходим к обходу CORS 
@@ -170,7 +179,15 @@ async function getRange(sheetConfig, range) {
     }
     
     const csv = await response2.text();
-    return csv.split('\n').map(row => row.split(','));
+    let result = csv.split('\n').map(row => row.split(','));
+
+    const rangeParts = range.split(':');
+    const isSingleColumn = rangeParts[0].charAt(0) === rangeParts[1]?.charAt(0);
+
+    if (result.length > 0 && isSingleColumn) {
+        result = result.map(row => row[0]);
+    }
+    return result;
   }
 }
 
@@ -180,14 +197,20 @@ let day = ((new Date().getDay() + 6) % 7 + 1) % 7;
 ///////////////////////////////////////////////////////////
 
 //Из диапазона листа <DAY> D18:→18 составляем список elemGROUPS, а из диапазона D4:→4 список secondGROUPS. 
-const elemGROUPS = getRange(days[`day${day}`], 'D18:AZ18')
-const secondGROUPS = getRange(days[`day${day}`], 'D4:AZ4')
-//создаём общий список классов
-GROUPS = [...elemGROUPS, ...secondGROUPS]
+const elemGROUPS = await getRange(days[`day${day}`], 'D18:AZ18')
+const secondGROUPS = await getRange(days[`day${day}`], 'D4:AZ4')
+const GROUPS = [...elemGROUPS, ...secondGROUPS] //объединяем в общий список классов
 
 //(Ах да, совсем забыл, пользователю предоставляется выбор ещё и из GROUPS, выбранное значение из текстового списка будет в GROUP, которое сохраняем в куки и берём изначально из них, если оно там есть)
-
 //Для выбранного GROUP получаем диапазон на 12 ячеек вниз, сохраняем эти значения в список LESSONSandROOMS, пустые значения не убираем и не пропускаем.
+const column = String.fromCharCode(68 + groupIndex);
+
+if (elemGROUPS[0][groupIndex]) { // Если группа в elemGROUPS
+    let LESSONSandROOMS = await getRange(days[`day${day}`], `${column}18:${column}29`);
+  
+} else { // Если группа в secondGROUPS
+    let LESSONSandROOMS = await getRange(days[`day${day}`], `${column}4:${column}15`);
+}
 
 //Получаем индекс первого непустого элемента в LESSONSandROOMS, к индексу прибавляем единицу и сохраняем в firstlessonNUM. 
 let firstlessonNUM = -1;
@@ -200,14 +223,16 @@ for (let i = 0; i < 12; i++) {
 //Получаем индекс последнего непустого элемента в LESSONSandROOMS, к индексу прибавляем единицу и сохраняем в lastlessonNUM. 
 let lastlessonNUM = -1;
 for (let i = 11; i >= 0; i--) {
-  if (LESSONSandROOMS[i]) { // проверка на непустое значение (truthy)
+  if (LESSONSandROOMS[i]) { //truthy
     lastlessonNUM = i;
     break;
   }
 }
-//Если GROUP принадлежит elemGROUPS: Берём текст ячеек "C"+"firstlessonNUM+18" : "C"+"lastlessonNUM+18" в массив TIMES
-
-//Если GROUP принадлежит secondGROUPS: Берём текст ячеек "C"+"firstlessonNUM+4" : "C"+"lastlessonNUM+4" в массив TIMES
+//получаем массив продолжительности уроков, отдельный для нижней и верхней части расписания
+const TIMES = await getRange(
+  days[`day${day}`], 
+  `C${(elemGROUPS[0][groupIndex] ? 18 : 4) + firstlessonNUM}:C${(elemGROUPS[0][groupIndex] ? 18 : 4) + lastlessonNUM}`
+);
 
 //В таблице с домашним заданием открываем лист соответствующий LESSON in LESSONS, значение ячейки C2 добавляем в массив HOMETASK 
  
