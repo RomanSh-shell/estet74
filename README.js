@@ -6,7 +6,7 @@ async function getRange(sheetConfig, range) {
       `https://sheets.googleapis.com/v4/spreadsheets/${sheetConfig.sheetId}/values/${range}?key=${sheetConfig.apiKey}`
     );
     
-    if (!response.ok) throw new Error(`[${sheetConfig.name}]:API failed`);
+    if (!response.ok) throw new Error(`[${sheetConfig.name}]: API failed`);
     const data = await response.json();
     return data.values;
     
@@ -22,13 +22,15 @@ async function getRange(sheetConfig, range) {
       // Если и второй способ не сработал, возвращаем ручной выбор таблиц.
       console.error(`!!! [${sheetConfig.name}]: Не удалось получить данные`);
       FAIL = true 
-      throw new Error(`Couldn't get data from table [${sheetConfig.name}]. Fallback to the old design`);
+      throw new Error(`Couldn't get any data from table [${sheetConfig.name}]. Fallback to the old design`);
     }
     
     const csv = await response2.text();
     return csv.split('\n').map(row => row.split(','));
   }
 }
+//Получаем порядковый номер следующего дня, где понедельник = 0
+const nextDay = ((new Date().getDay() + 6) % 7 + 1) % 7;
 //Из ячеек B2 таблиц расписания сохраняем текст соответствующий «ДД.ММ.» в массив DATES
 
 //(Пользователю предоставляется выбор дня недели DAY По умолчанию DAY приравниваем следующему дня недели, если завтра СБ или ВС или ПН, то DAY = "Вся неделя")
