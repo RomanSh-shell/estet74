@@ -1,4 +1,4 @@
-
+let FAIL = false
 async function getRange(sheetConfig, range) {
   // Пробуем API
   try {
@@ -6,21 +6,29 @@ async function getRange(sheetConfig, range) {
       `https://sheets.googleapis.com/v4/spreadsheets/${sheetConfig.sheetId}/values/${range}?key=${sheetConfig.apiKey}`
     );
     
-    if (!response.ok) throw new Error('API failed');
-      const data = await response.json();
-      return data.values;
+    if (!response.ok) throw new Error(`[${sheetConfig.name}]:API failed`);
+    const data = await response.json();
+    return data.values;
     
-  } catch (error) {
+  } catch (error) { 
+    // Если получить по API не получилось, переходим к обходу CORS 
     console.warn(`! Ошибка получения данных таблицы [${sheetConfig}] — неверный API, переход к обходу CORS |Получение API: https://ai2.appinventor.mit.edu/reference/other/googlesheets-api-setup.html`);
-    
-    // Fallback на CORS proxy
+
     const proxy = 'https://corsproxy.io/?';
     const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetConfig.sheetId}/export?format=csv&gid=${sheetConfig.gid}`;
-    const response = await fetch(proxy + encodeURIComponent(csvUrl));
-    if (!response.ok) throw new Error(`!!! [${sheetConfig}]: Неверно указан API, Не удалось обойти CORS |Proxy: best-proxies.ru FineProxy.org`);
-    const csv = await response.text();
+    const response2 = await fetch(proxy + encodeURIComponent(csvUrl));
+    
+    if (!response2.ok) { 
+      // Если и второй способ не сработал, возвращаем ручной выбор таблиц.
+      console.error(`!!! [${sheetConfig.name}]: Не удалось получить данные`);
+      FAIL = true 
+      throw new Error(`Couldn't get data from table [${sheetConfig.name}]. Fallback to the old design`);
+    }
+    
+    const csv = await response2.text();
     return csv.split('\n').map(row => row.split(','));
   }
+}
 //Из ячеек B2 таблиц расписания сохраняем текст соответствующий «ДД.ММ.» в массив DATES
 
 //(Пользователю предоставляется выбор дня недели DAY По умолчанию DAY приравниваем следующему дня недели, если завтра СБ или ВС или ПН, то DAY = "Вся неделя")
