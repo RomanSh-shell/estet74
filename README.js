@@ -203,7 +203,7 @@ const GROUPS = [...elemGROUPS, ...secondGROUPS] //объединяем в общ
 
 //(Ах да, совсем забыл, пользователю предоставляется выбор ещё и из GROUPS, выбранное значение из текстового списка будет в GROUP, которое сохраняем в куки и берём изначально из них, если оно там есть)
 //Для выбранного GROUP получаем диапазон на 12 ячеек вниз, сохраняем эти значения в список LESSONSandROOMS, пустые значения не убираем и не пропускаем.
-const column = String.fromCharCode(68 + groupIndex);
+const column = String.fromCharCode(68 + groupIndex); //68 = D
 
 if (elemGROUPS[0][groupIndex]) { // Если группа в elemGROUPS
     let LESSONSandROOMS = await getRange(days[`day${day}`], `${column}18:${column}29`);
@@ -228,11 +228,40 @@ for (let i = 11; i >= 0; i--) {
     break;
   }
 }
+
 //получаем массив продолжительности уроков, отдельный для нижней и верхней части расписания
 const TIMES = await getRange(
   days[`day${day}`], 
-  `C${(elemGROUPS[0][groupIndex] ? 18 : 4) + firstlessonNUM}:C${(elemGROUPS[0][groupIndex] ? 18 : 4) + lastlessonNUM}`
+  `C${(elemGROUPS[0][groupIndex] ? 18 : 4) + firstlessonNUM}:C${(elemGROUPS[0][groupIndex] ? 18 : 4) + lastlessonNUM}` //Берём колонку C от начальной до конечной строки, 
 );
 
 //В таблице с домашним заданием открываем лист соответствующий LESSON in LESSONS, значение ячейки C2 добавляем в массив HOMETASK 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
