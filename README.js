@@ -1,29 +1,30 @@
+////////////////////////////////////////////////
 const days = {
-  monday: {
+  day1: {
     name: 'Расписание на понедельник',
     id: '1rnYBzXaWr9dI1u8haxakKDiz7KK0IzjJ',
     api: '',
     gid: '0'
   },
-  tuesday: {
+  day2: {
     name: 'Расписание на вторник',
     id: '17Oz-Ld6NHA57SEKCiuAWQNYYngJ3_7LB',
     api: '',
     gid: '0'
   },
-  wednesday: {
+  day3: {
     name: 'Расписание на среду',
     id: '1Xt-HxVTrKzp4_3NcaBGbTYxKp_PGLeN2',
     api: '',
     gid: '0'
   },
-  thursday: {
+  day4: {
     name: 'Расписание на четверг',
     id: '1oessjK-CwC-p_Kf0y1be61ZRwHq4jd4l',
     api: '',
     gid: '0'
   },
-  friday: {
+  day5: {
     name: 'Расписание на пятницу',
     id: '1_m0C3uWV3XvPLAko0KZSJWq5JMMHe8HH',
     api: '',
@@ -129,8 +130,18 @@ const classes = {
     gid: '0'
   }
 };
-
-
+//////////////////////////////////////////////////////////
+//---сохранение переменной в куки---//
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+//---Получение данных из таблицы---//
 let FAIL = false
 async function getRange(sheetConfig, range) {
   // Пробуем API
@@ -162,16 +173,15 @@ async function getRange(sheetConfig, range) {
     return csv.split('\n').map(row => row.split(','));
   }
 }
+
 //Получаем порядковый номер следующего дня, где понедельник = 0
-const nextDay = ((new Date().getDay() + 6) % 7 + 1) % 7;
-//Из ячеек B2 таблиц расписания сохраняем текст соответствующий «ДД.ММ.» в массив DATES
+let day = ((new Date().getDay() + 6) % 7 + 1) % 7;
 
-//(Пользователю предоставляется выбор дня недели DAY По умолчанию DAY приравниваем следующему дня недели, если завтра СБ или ВС или ПН, то DAY = "Вся неделя")
-
-//В таблице с расписанием нам нужен лист с выбранным пользователем днём недели DAY
+///////////////////////////////////////////////////////////
 
 //Из диапазона листа <DAY> D18:→18 составляем список elemGROUPS, а из диапазона D4:→4 список secondGROUPS. 
-
+const elemGROUPS = getRange(days[`day${day}`], 'D18:AZ18')
+const secondGROUPS = getRange(days[`day${day}`], 'D4:AZ4')
 //создаём общий список классов
 GROUPS = [...elemGROUPS, ...secondGROUPS]
 
