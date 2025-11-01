@@ -45,7 +45,7 @@ async function getRange(sheetConfig, range) {
   } catch (error) { 
     console.warn(`! Ошибка получения данных таблицы [${sheetConfig.name}] — неверный API, переход к обходу CORS`);
 
-    const proxy = 'https://corsproxy.io/?';
+    const proxy = '46.47.197.210';
     const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetConfig.id}/export?format=csv&gid=${sheetConfig.gid}`;
     const response2 = await fetch(proxy + encodeURIComponent(csvUrl));
     
