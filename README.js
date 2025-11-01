@@ -252,131 +252,302 @@ const TIMES = await getRange(
 
 //В таблице с домашним заданием открываем лист соответствующий LESSON in LESSONS, значение ячейки C2 добавляем в массив HOMETASK 
 
-//---Приведение сокращений предметов к стандартному виду---//
-function normalizeSubject(SUBJECT_MAP) {
-  const subjectMap = {
-    'Английский язык': ['Англ.яз', 'Английский', 'English', 'Анг.яз'],
-    'Физкультура': ['Физ-ра', 'Физическая культура', 'Физра', 'Физ-культура'],
-    'Русский язык': ['Рус.яз', 'Русский'],
-    'Математика': ['Матем', 'Математика'],
-    'Статистика': ['Вероятность и Статистика','ВиС','Вероятность', 'В', 'С'],
-    'Геометрия': ['Геом', 'Г'],
-    'Алгебра': ['Алг', 'А'],
-    'Литература': ['Литер', 'Лит-ра'],
-    'История': ['История', 'Истор'],
-    'География': ['География', 'Геогр'],
-    'Биология': ['Биология', 'Биол'],
-    'Химия': ['Химия'],
-    'Психология': ['Психол', 'Психолог'],
-    'Физика': ['Физика'],
-    'Информатика': ['Информатика', 'Информ'],
-    'Обществознание': ['Обществ', 'Обществозн'],
-    'Технология': ['Технология', 'Технол'],
-    'Рисование': ['ИЗО', 'Изобразительное искусство'],
-    'Музыка': ['Музыка'],
-    'Основы безопасности': ['ОБЖ', 'Основы безопасности жизнедеятельности'],
-    'Начальные классы': ['Началка', 'Нач. классы', 'НК'],
-  };
-  
-  // Создаем обратный маппинг
-const ALL_KNOWN_VARIANTS = [];
-const REVERSE_MAP = {};
+//---Константы---//
+const SUBJECT_MAP = {
+  // Предметы
+  'Английский язык': ['Англ.яз', 'Английский', 'English', 'Анг.яз', 'Англ', 'Анг'],
+  'Физкультура': ['Физ-ра', 'Физическая культура', 'Физра', 'Физ-культура', 'Физ'],
+  'Русский язык': ['Рус.яз', 'Русский', 'Рус'],
+  'Литература': ['Литер', 'Лит-ра', 'Лит'],
+  'История': ['Истор'],
+  'География': ['Геогр'],
+  'Биология': ['Биол'],
+  'Химия': [],
+  'Психология': ['Психол', 'Психолог'],
+  'Физика': [],
+  'Информатика': ['Информ'],
+  'Обществознание': ['Обществ', 'Обществозн'],
+  'Технология': ['Технол'],
+  'Рисование': ['ИЗО', 'Изобразительное искусство'],
+  'Музыка': [],
+  'Основы безопасности': ['ОБЖ', 'Основы безопасности жизнедеятельности'],
+  'Начальные классы': ['Началка', 'Нач. классы', 'НК'],
+  'Математика': ['Матем', 'Математ'],
+  // Предметы-метаданные
+  'Статистика': ['Вероятность и Статистика', 'ВиС', 'Вероятность', 'В', 'С'],
+  'Геометрия': ['Геом', 'Г'],
+  'Алгебра': ['Алг', 'А'],
+  // Метаданные
+  'Лекция': ['Лек', 'Л'],
+  'Практика': ['Практ', 'Пр'],
+  'Подготовка': ['Подг', 'П'],
+  'Лабораторная': ['Лаб', 'ЛР'],
+  'Контрольная': ['КР'],
+  'Консультация': ['Конс', 'К'],
+  'Зачёт': ['Зач', 'З'],
+  'Экзамен': ['Экз'],
+  // Кабинеты
+  'Столовая': ['стол', 'столовая'],
+  'Спортзал': ['зал', 'спортзал', 'спорт'],
+  'Актовый зал': ['актовый', 'акт', 'актзал'],
+  'Лаборатория': ['лаб', 'лаборатория'],
+  'Кабинет': ['каб', 'к'],
+  'Мастерская': ['мастер', 'маст'],
+  'Бассейн': ['бассейн', 'басс']
+};
 
-for (const [normalName, variants] of Object.entries(SUBJECT_MAP)) {
-  variants.forEach(variant => {
-    ALL_KNOWN_VARIANTS.push(variant.toLowerCase());
-    REVERSE_MAP[variant.toLowerCase()] = normalName;
-  });
-  ALL_KNOWN_VARIANTS.push(normalName.toLowerCase());
-  REVERSE_MAP[normalName.toLowerCase()] = normalName;
+// Создаём обратную карту один раз при загрузке модуля
+const REVERSE_MAP_DATA = (() => {
+  const map = {};
+  const allVariants = [];
+  
+  for (const [normalName, variantList] of Object.entries(SUBJECT_MAP)) {
+    const lowerNormal = normalName.toLowerCase();
+    allVariants.push(lowerNormal);
+    map[lowerNormal] = normalName;
+    
+    variantList.forEach(variant => {
+      const lowerVariant = variant.toLowerCase();
+      allVariants.push(lowerVariant);
+      map[lowerVariant] = normalName;
+    });
+  }
+  
+  return { map, allVariants };
+})();
+
+//---Вспомогательные функции---//
+
+/**
+ * Вычисляет расстояние Левенштейна между двумя строками
+ * @param {string} a - Первая строка
+ * @param {string} b - Вторая строка
+ * @returns {number} Расстояние редактирования
+ */
+function levenshteinDistance(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      matrix[i][j] = b[i - 1] === a[j - 1] 
+        ? matrix[i - 1][j - 1]
+        : Math.min(matrix[i - 1][j - 1], matrix[i][j - 1], matrix[i - 1][j]) + 1;
+    }
+  }
+  return matrix[b.length][a.length];
 }
 
-function expandToFull(parts) {
-  return {
-    subject: REVERSE_MAP[parts.subject.toLowerCase()] || parts.subject,
-    metadata: parts.metadata, // тут тоже можно маппить
-    room: parts.room
-  };
+/**
+ * Находит ближайшее совпадение из списка вариантов
+ * @param {string} input - Входная строка
+ * @param {string[]} options - Список вариантов для сравнения
+ * @param {number} maxDistance - Максимальное допустимое расстояние
+ * @returns {string|null} Ближайший вариант или null
+ */
+function findClosestMatch(input, options, maxDistance = 2) {
+  if (!input || typeof input !== 'string') return null;
+  if (!options || options.length === 0) return null;
+  
+  // Точное совпадение имеет приоритет
+  if (options.includes(input)) return input;
+  
+  let minDistance = Infinity;
+  let closestOption = null;
+  
+  for (const option of options) {
+    const distance = levenshteinDistance(input, option);
+    if (distance < minDistance && distance <= maxDistance) {
+      minDistance = distance;
+      closestOption = option;
+    }
+  }
+  
+  return closestOption;
 }
 
-//---Разделение смешанных данных---//
-function parseCompleteSubject(subjectString) {
-  const normalizedSubject = normalizeSubject(subjectString);
-  const result = { 
-    subject: normalizedSubject, 
-    room: '', 
-    metadata: '', 
-  };
-  
-  let match;
-  
-  // 1. Предмет(метаданные)кабинет - "Математика(С)3", "Информатика(лаб)столовая"
-  match = subjectString.match(/^(.+?)\(([^)]+)\)(.+)$/);
-  if (match) {
-    const rawSubject = match[1].trim();
-    result.subject = reverseMap[rawSubject.toLowerCase()] || rawSubject;
-    result.metadata = reverseMap[rawMetadata.toLowerCase()] || rawMetadata
-    result.room = match[3].trim();
-    return result;
+//---ШАГ 1: Приведение проблемных сокращений---//
+
+/**
+ * Приводит проблемные сокращения к стандартному виду
+ * @param {string} str - Входная строка
+ * @returns {string} Очищенная строка (Рус.яз → Русяз, Физ-ра → Физра)
+ */
+function cleanProblematicAbbreviations(str) {
+  if (!str || typeof str !== 'string') return '';
+  return str.trim().replace(/\.яз|\.ра|-ра/gi, '');
+}
+
+//---ШАГ 2: Разбиение на subject, metadata, room---//
+
+/**
+ * Парсит строку и извлекает предмет, метаданные и кабинет
+ * @param {string} str - Входная строка для парсинга
+ * @returns {Object} Объект с полями subject, metadata, room
+ */
+function parseSubjectParts(str) {
+  if (!str || typeof str !== 'string') {
+    return { subject: '', metadata: '', room: '' };
   }
   
-  // 2. ПредметМетаданныекабинет - "МатемА3", "ИнформатикаПр2" (только цифровые кабинеты)
-  match = subjectString.match(/^(.+?)([А-Я]{1,3})(\d+[а-яё]?)$/);
-  if (match) {
-    const rawSubject = match[1].trim();
-    result.subject = reverseMap[rawSubject.toLowerCase()] || rawSubject;
-    result.metadata = reverseMap[rawMetadata.toLowerCase()] || rawMetadata
-    result.room = match[3].trim();
-    return result;
+  const cleanedStr = cleanProblematicAbbreviations(str);
+  
+  // Паттерны в порядке специфичности
+  const patterns = [
+    // 1. Предмет(метаданные)кабинет - "Математика(С)3"
+    {
+      regex: /^(.+?)\(([^)]+)\)(.+)$/,
+      handler: (match) => ({
+        subject: match[1].trim(),
+        metadata: match[2].trim(),
+        room: match[3].trim()
+      })
+    },
+    // 2. ПредметМетаданныеЦифровыйКабинет - "МатемА3"
+    {
+      regex: /^(.+?)([А-ЯЁ]{1,3})(\d+[а-яё]?)$/u,
+      handler: (match) => ({
+        subject: match[1].trim(),
+        metadata: match[2].trim(),
+        room: match[3].trim()
+      })
+    },
+    // 3. Предмет.кабинет - "Математика.3"
+    {
+      regex: /^(.+?)\.(.+)$/,
+      handler: (match) => ({
+        subject: match[1].trim(),
+        metadata: '',
+        room: match[2].trim()
+      })
+    },
+    // 4. ПредметКабинет - "Математика3"
+    {
+      regex: /^(.+?)(\d+[а-яё]?)$/u,
+      handler: (match) => match[1].trim() ? ({
+        subject: match[1].trim(),
+        metadata: '',
+        room: match[2].trim()
+      }) : null
+    }
+  ];
+  
+  for (const pattern of patterns) {
+    const match = cleanedStr.match(pattern.regex);
+    if (match) {
+      const parsed = pattern.handler(match);
+      if (parsed) return parsed;
+    }
   }
   
-  // 3. Предмет.кабинет - "Математика.3", "Технология.столовая", "Информатика.с9"
-  match = subjectString.match(/^(.+)\.(.+)$/);
-  if (match) {
-    const rawSubject = match[1].trim();
-    result.subject = reverseMap[rawSubject.toLowerCase()] || rawSubject;
-    result.room = match[2].trim();
-    return result;
+  // Если ничего не совпало, возвращаем исходную строку
+  return { subject: str, metadata: '', room: '' };
+}
+
+//---ШАГ 3: Исправление опечаток---//
+
+/**
+ * Исправляет опечатки в словах (малое расстояние Левенштейна)
+ * @param {Object} parts - Объект с полями subject, metadata, room
+ * @returns {Object} Новый объект с исправленными опечатками
+ */
+function correctTypos(parts) {
+  const result = { ...parts };
+  
+  if (result.subject) {
+    const closest = findClosestMatch(
+      result.subject.toLowerCase(), 
+      REVERSE_MAP_DATA.allVariants,
+      2  // Максимум 2 символа отличия для опечаток
+    );
+    if (closest) {
+      result.subject = closest;
+    }
   }
   
-  // 4. ПредметКАБИНЕТ -  "Математика3", "Информатика9с"
-  match = subjectString.match(/^(.+?)(\d+[а-яё]?)$/);
-  if (match && match[1].trim() !== '') {
-    const rawSubject = match[1].trim();
-    result.subject = reverseMap[rawSubject.toLowerCase()] || rawSubject;
-    result.room = match[2].trim();
-    return result;
+  if (result.metadata) {
+    const closest = findClosestMatch(
+      result.metadata.toLowerCase(), 
+      REVERSE_MAP_DATA.allVariants,
+      2
+    );
+    if (closest) {
+      result.metadata = closest;
+    }
   }
   
-  // Нормализуем subject, если не нашли кабинет
-  result.subject = reverseMap[result.subject.toLowerCase()] || result.subject;
+  if (result.room) {
+    const closest = findClosestMatch(
+      result.room.toLowerCase(), 
+      REVERSE_MAP_DATA.allVariants,
+      2
+    );
+    if (closest) {
+      result.room = closest;
+    }
+  }
   
   return result;
 }
 
+//---ШАГ 4: Приведение к полному виду---//
 
+/**
+ * Раскрывает сокращения в полные названия
+ * @param {Object} parts - Объект с полями subject, metadata, room
+ * @returns {Object} Новый объект с полными названиями
+ */
+function expandAbbreviations(parts) {
+  const result = { ...parts };
+  
+  if (result.subject) {
+    const lowerSubject = result.subject.toLowerCase();
+    if (REVERSE_MAP_DATA.map[lowerSubject]) {
+      result.subject = REVERSE_MAP_DATA.map[lowerSubject];
+    }
+  }
+  
+  if (result.metadata) {
+    const lowerMetadata = result.metadata.toLowerCase();
+    if (REVERSE_MAP_DATA.map[lowerMetadata]) {
+      result.metadata = REVERSE_MAP_DATA.map[lowerMetadata];
+    }
+  }
+  
+  if (result.room) {
+    const lowerRoom = result.room.toLowerCase();
+    if (REVERSE_MAP_DATA.map[lowerRoom]) {
+      result.room = REVERSE_MAP_DATA.map[lowerRoom];
+    }
+  }
+  
+  return result;
+}
 
+//---Главная функция обработки---//
 
+/**
+ * Обрабатывает массив строк с предметами (все 4 шага)
+ * @param {string[]} subjectArray - Массив строк для обработки
+ * @returns {Object[]} Массив нормализованных объектов
+ */
+function processSubjects(subjectArray) {
+  if (!Array.isArray(subjectArray)) {
+    console.warn('processSubjects: ожидается массив');
+    return [];
+  }
+  
+  return subjectArray.map(subject => {
+    // Если пустая строка или не строка - возвращаем пустой объект (окно в расписании)
+    if (!subject || typeof subject !== 'string' || !subject.trim()) {
+      return { subject: '', metadata: '', room: '' };
+    }
+    
+    // Шаги 1-4: Парсинг → Исправление опечаток → Раскрытие сокращений
+    return expandAbbreviations(correctTypos(parseSubjectParts(subject)));
+  });
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+output = processSubjects(LESSONSandROOMS)
 
