@@ -203,6 +203,55 @@ async function getRange(sheetConfig, range) {
   }
 }
 
+//Получаем порядковый номер следующего дня, где понедельник = 0
+const day = ((new Date().getDay() + 6) % 7 + 1) % 7;
+
+///////////////////////////////////////////////////////////
+
+//Из диапазона листа <DAY> D18:→18 составляем список elemGROUPS, а из диапазона D4:→4 список secondGROUPS. 
+const elemGROUPS = await getRange(days[`day${day}`], 'D18:AZ18')
+const secondGROUPS = await getRange(days[`day${day}`], 'D4:AZ4')
+const GROUPS = [...elemGROUPS, ...secondGROUPS] //объединяем в общий список классов
+
+//(Ах да, совсем забыл, пользователю предоставляется выбор ещё и из GROUPS, выбранное значение из текстового списка будет в GROUP, которое сохраняем в куки и берём изначально из них, если оно там есть)
+//Для выбранного GROUP получаем диапазон на 12 ячеек вниз, сохраняем эти значения в список LESSONSandROOMS, пустые значения не убираем и не пропускаем.
+const column = String.fromCharCode(68 + groupIndex); //68 = D
+
+if (elemGROUPS[0][groupIndex]) { // Если группа в elemGROUPS
+    let LESSONSandROOMS = await getRange(days[`day${day}`], `${column}18:${column}29`);
+  
+} else { // Если группа в secondGROUPS
+    let LESSONSandROOMS = await getRange(days[`day${day}`], `${column}4:${column}15`);
+}
+
+let LESSONS = LESSONSandROOMS.map(str => str.replace(/[^a-zA-Zа-яА-Я]/g, ""));
+let ROOMS
+
+//Получаем индекс первого непустого элемента в LESSONSandROOMS, к индексу прибавляем единицу и сохраняем в firstlessonNUM. 
+let firstlessonNUM = -1;
+for (let i = 0; i < 12; i++) {
+  if (LESSONSandROOMS[i]) { // проверка на непустое значение (truthy)
+    firstlessonNUM = i;
+    break;
+  }
+}
+//Получаем индекс последнего непустого элемента в LESSONSandROOMS, к индексу прибавляем единицу и сохраняем в lastlessonNUM. 
+let lastlessonNUM = -1;
+for (let i = 11; i >= 0; i--) {
+  if (LESSONSandROOMS[i]) { //truthy
+    lastlessonNUM = i;
+    break;
+  }
+}
+
+//получаем массив продолжительности уроков, отдельный для нижней и верхней части расписания
+const TIMES = await getRange(
+  days[`day${day}`], 
+  `C${(elemGROUPS[0][groupIndex] ? 18 : 4) + firstlessonNUM}:C${(elemGROUPS[0][groupIndex] ? 18 : 4) + lastlessonNUM}` //Берём колонку C от начальной до конечной строки, 
+);
+
+//В таблице с домашним заданием открываем лист соответствующий LESSON in LESSONS, значение ячейки C2 добавляем в массив HOMETASK 
+
 //---Приведение сокращений предметов к стандартному виду---//
 function normalizeSubject(subjectString) {
   const subjectMap = {
@@ -218,10 +267,10 @@ function normalizeSubject(subjectString) {
     'География': ['География', 'Геогр'],
     'Биология': ['Биология', 'Биол'],
     'Химия': ['Химия'],
-    'Психология': ['Психол','Психолог'],
+    'Психология': ['Психол', 'Психолог'],
     'Физика': ['Физика'],
     'Информатика': ['Информатика', 'Информ'],
-    'Обществознание': ['Обществ'],
+    'Обществознание': ['Обществ', 'Обществозн'],
     'Технология': ['Технология', 'Технол'],
     'Рисование': ['ИЗО', 'Изобразительное искусство'],
     'Музыка': ['Музыка'],
@@ -229,18 +278,17 @@ function normalizeSubject(subjectString) {
     'Начальные классы': ['Началка', 'Нач. классы', 'НК'],
   };
   
-  // Создаем обратный маппинг: сокращение → полное название
+  // Создаем обратный маппинг
   const reverseMap = {};
   for (const [normalName, variants] of Object.entries(subjectMap)) {
     variants.forEach(variant => {
-      reverseMap[variant.toLowerCase()] = normalName;
+      reverseMap[variant.toLowerCase().trim()] = normalName;
     });
-    // Добавляем полное название
-    reverseMap[normalName.toLowerCase()] = normalName;
+    reverseMap[normalName.toLowerCase().trim()] = normalName;
   }
   
-  const lowerInput = subjectString.trim().toLowerCase();
-  return reverseMap[lowerInput] || subjectString; // Возвращаем полное название или оригинал
+  const normalizedInput = subjectString.trim().toLowerCase();
+  return reverseMap[normalizedInput] || subjectString.trim();
 }
 
 //---Разделение смешанных данных---//
@@ -297,56 +345,6 @@ function parseCompleteSubject(subjectString) {
   
   return result;
 }
-//Получаем порядковый номер следующего дня, где понедельник = 0
-const day = ((new Date().getDay() + 6) % 7 + 1) % 7;
-
-///////////////////////////////////////////////////////////
-
-//Из диапазона листа <DAY> D18:→18 составляем список elemGROUPS, а из диапазона D4:→4 список secondGROUPS. 
-const elemGROUPS = await getRange(days[`day${day}`], 'D18:AZ18')
-const secondGROUPS = await getRange(days[`day${day}`], 'D4:AZ4')
-const GROUPS = [...elemGROUPS, ...secondGROUPS] //объединяем в общий список классов
-
-//(Ах да, совсем забыл, пользователю предоставляется выбор ещё и из GROUPS, выбранное значение из текстового списка будет в GROUP, которое сохраняем в куки и берём изначально из них, если оно там есть)
-//Для выбранного GROUP получаем диапазон на 12 ячеек вниз, сохраняем эти значения в список LESSONSandROOMS, пустые значения не убираем и не пропускаем.
-const column = String.fromCharCode(68 + groupIndex); //68 = D
-
-if (elemGROUPS[0][groupIndex]) { // Если группа в elemGROUPS
-    let LESSONSandROOMS = await getRange(days[`day${day}`], `${column}18:${column}29`);
-  
-} else { // Если группа в secondGROUPS
-    let LESSONSandROOMS = await getRange(days[`day${day}`], `${column}4:${column}15`);
-}
-
-let LESSONS = LESSONSandROOMS.map(str => str.replace(/[^a-zA-Zа-яА-Я]/g, ""));
-let ROOMS
-
-//Получаем индекс первого непустого элемента в LESSONSandROOMS, к индексу прибавляем единицу и сохраняем в firstlessonNUM. 
-let firstlessonNUM = -1;
-for (let i = 0; i < 12; i++) {
-  if (LESSONSandROOMS[i]) { // проверка на непустое значение (truthy)
-    firstlessonNUM = i;
-    break;
-  }
-}
-//Получаем индекс последнего непустого элемента в LESSONSandROOMS, к индексу прибавляем единицу и сохраняем в lastlessonNUM. 
-let lastlessonNUM = -1;
-for (let i = 11; i >= 0; i--) {
-  if (LESSONSandROOMS[i]) { //truthy
-    lastlessonNUM = i;
-    break;
-  }
-}
-
-//получаем массив продолжительности уроков, отдельный для нижней и верхней части расписания
-const TIMES = await getRange(
-  days[`day${day}`], 
-  `C${(elemGROUPS[0][groupIndex] ? 18 : 4) + firstlessonNUM}:C${(elemGROUPS[0][groupIndex] ? 18 : 4) + lastlessonNUM}` //Берём колонку C от начальной до конечной строки, 
-);
-
-//В таблице с домашним заданием открываем лист соответствующий LESSON in LESSONS, значение ячейки C2 добавляем в массив HOMETASK 
-
-
 
 
 
