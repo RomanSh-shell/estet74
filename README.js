@@ -253,7 +253,7 @@ const TIMES = await getRange(
 //В таблице с домашним заданием открываем лист соответствующий LESSON in LESSONS, значение ячейки C2 добавляем в массив HOMETASK 
 
 //---Приведение сокращений предметов к стандартному виду---//
-function normalizeSubject(subjectString) {
+function normalizeSubject(SUBJECT_MAP) {
   const subjectMap = {
     'Английский язык': ['Англ.яз', 'Английский', 'English', 'Анг.яз'],
     'Физкультура': ['Физ-ра', 'Физическая культура', 'Физра', 'Физ-культура'],
@@ -279,16 +279,24 @@ function normalizeSubject(subjectString) {
   };
   
   // Создаем обратный маппинг
-  const reverseMap = {};
-  for (const [normalName, variants] of Object.entries(subjectMap)) {
-    variants.forEach(variant => {
-      reverseMap[variant.toLowerCase().trim()] = normalName;
-    });
-    reverseMap[normalName.toLowerCase().trim()] = normalName;
-  }
-  
-  const normalizedInput = subjectString.trim().toLowerCase();
-  return reverseMap[normalizedInput] || subjectString.trim();
+const ALL_KNOWN_VARIANTS = [];
+const REVERSE_MAP = {};
+
+for (const [normalName, variants] of Object.entries(SUBJECT_MAP)) {
+  variants.forEach(variant => {
+    ALL_KNOWN_VARIANTS.push(variant.toLowerCase());
+    REVERSE_MAP[variant.toLowerCase()] = normalName;
+  });
+  ALL_KNOWN_VARIANTS.push(normalName.toLowerCase());
+  REVERSE_MAP[normalName.toLowerCase()] = normalName;
+}
+
+function expandToFull(parts) {
+  return {
+    subject: REVERSE_MAP[parts.subject.toLowerCase()] || parts.subject,
+    metadata: parts.metadata, // тут тоже можно маппить
+    room: parts.room
+  };
 }
 
 //---Разделение смешанных данных---//
