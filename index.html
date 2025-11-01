@@ -1,3 +1,4 @@
+////////////////////index.html//////////////////////
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -10,7 +11,97 @@
 </head>
 <body>
     <div id="app">
-        <div class="container">
+        <!-- Fallback интерфейс при ошибке загрузки -->
+        <div class="container" v-if="failMode">
+            <div class="row">
+                <div class="col-md-12 pd15">
+                    <h1><strong>Расписание уроков</strong></h1>
+                </div>
+                <div class="col-md-12 pd15">
+                    <div class="col-md-12 pd0 index-menu">
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1rnYBzXaWr9dI1u8haxakKDiz7KK0IzjJ/edit">
+                            <div class="col-md-4 vh-center">Понедельник</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/17Oz-Ld6NHA57SEKCiuAWQNYYngJ3_7LB/edit">
+                            <div class="col-md-4 vh-center">Вторник</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1Xt-HxVTrKzp4_3NcaBGbTYxKp_PGLeN2/edit">
+                            <div class="col-md-4 vh-center">Среда</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1oessjK-CwC-p_Kf0y1be61ZRwHq4jd4l/edit">
+                            <div class="col-md-6 vh-center">Четверг</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1_m0C3uWV3XvPLAko0KZSJWq5JMMHe8HH/edit">
+                            <div class="col-md-6 vh-center">Пятница</div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-12 pd15">
+                    В расписании возможны изменения день в день по независящим от администрации причинам.
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12 pd15">
+                    <h1><strong>Домашние задания</strong></h1>
+                </div>
+                <div class="col-md-12 pd15">
+                    <div class="col-md-12 pd0 index-menu">
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1WDnmYHNnhmO9MdCdcR2mKRR9hTqthR84mqV_1VsU38w">
+                            <div class="col-md-4 vh-center">Индивидуалы</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI">
+                            <div class="col-md-4 vh-center">5-1 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ">
+                            <div class="col-md-4 vh-center">5-2 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w">
+                            <div class="col-md-4 vh-center">6-1 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU">
+                            <div class="col-md-4 vh-center">6-2 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s">
+                            <div class="col-md-4 vh-center">7-1 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY">
+                            <div class="col-md-4 vh-center">7-2 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU">
+                            <div class="col-md-4 vh-center">8-1 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q">
+                            <div class="col-md-4 vh-center">8-2 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc">
+                            <div class="col-md-4 vh-center">8-3 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0">
+                            <div class="col-md-4 vh-center">9-1 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw">
+                            <div class="col-md-4 vh-center">9-2 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g">
+                            <div class="col-md-4 vh-center">10-1 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw">
+                            <div class="col-md-4 vh-center">10-2 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s">
+                            <div class="col-md-4 vh-center">11-1 класс</div>
+                        </a>
+                        <a target="_blank" href="https://docs.google.com/spreadsheets/d/19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM">
+                            <div class="col-md-4 vh-center">11-2 класс</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Основной интерфейс -->
+        <div class="container" v-else>
             <header>
                 <h1><i class="fas fa-calendar-alt"></i> Электронный дневник</h1>
                 <div class="subtitle">Просмотр расписания и домашних заданий</div>
@@ -19,7 +110,7 @@
             <div class="filters-row">
                 <div class="filter-group">
                     <label for="group"><i class="fas fa-users"></i> Класс:</label>
-                    <select id="group" v-model="selectedGroup">
+                    <select id="group" v-model="selectedGroup" @change="loadSchedule">
                         <option v-for="group in GROUPS" :value="group" :key="group">
                             {{ group }}
                         </option>
@@ -28,7 +119,7 @@
                 
                 <div class="filter-group">
                     <label for="date"><i class="fas fa-calendar-day"></i> Дата:</label>
-                    <input type="date" id="date" v-model="selectedDate">
+                    <input type="date" id="date" v-model="selectedDate" @change="loadSchedule">
                 </div>
                 
                 <div class="date-display">
@@ -41,7 +132,11 @@
                     <i class="fas fa-clock"></i> Расписание уроков и домашние задания
                 </div>
                 
-                <table class="schedule-table" v-if="filteredLessons.length > 0">
+                <div v-if="loading" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Загрузка...
+                </div>
+                
+                <table class="schedule-table" v-else-if="schedule.length > 0">
                     <thead>
                         <tr>
                             <th>Урок</th>
@@ -52,19 +147,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="lesson in filteredLessons" :key="lesson.lesson">
+                        <tr v-for="lesson in schedule" :key="lesson.lesson" :class="{ 'empty-lesson': !lesson.subject }">
                             <td>{{ lesson.lesson }}</td>
                             <td class="lesson-time">{{ lesson.time }}</td>
                             <td>
-                                <div class="lesson-subject">{{ getStandardSubjectName(lesson.subject) }}</div>
-                                <div class="teacher-info" v-if="getTeacherBySubject(lesson.subject)">
-                                    {{ getTeacherBySubject(lesson.subject).name }}
+                                <div class="lesson-subject" v-if="lesson.subject">
+                                    {{ lesson.subject }}
+                                    <span v-if="lesson.metadata" class="lesson-metadata">({{ lesson.metadata }})</span>
                                 </div>
+                                <span v-else style="color: #999; font-style: italic;">Окно</span>
                             </td>
                             <td class="lesson-room">{{ lesson.room }}</td>
                             <td>
-                                <div class="hometask" v-if="getHometaskForSubject(lesson.subject)">
-                                    {{ getHometaskForSubject(lesson.subject) }}
+                                <div class="hometask" v-if="lesson.hometask">
+                                    {{ lesson.hometask }}
                                 </div>
                                 <span v-else style="color: #999; font-style: italic;">Не задано</span>
                             </td>
@@ -75,13 +171,6 @@
                 <div class="no-data" v-else>
                     <i class="fas fa-calendar-times"></i> На выбранную дату уроков нет
                 </div>
-
-                <div class="synonyms-info">
-                    <h3><i class="fas fa-language"></i> Синонимы предметов в системе:</h3>
-                    <div class="synonym-item" v-for="(synonyms, standardName) in SUBJECT_SYNONYMS" :key="standardName">
-                        <span>{{ standardName }}:</span> {{ synonyms.join(', ') }}
-                    </div>
-                </div>
             </div>
             
             <footer>
@@ -90,6 +179,9 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="settings.js"></script>
+    <script src="parser.js"></script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
