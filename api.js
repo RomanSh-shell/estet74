@@ -61,7 +61,11 @@ async function getRange(sheetConfig, range) {
     }
     
     const csv = await response2.text();
-    let result = csv.split('\n').map(row => row.split(','));
+    // Clean the CSV data by removing quotes and splitting into an array of rows
+    let result = csv.split('\n').map(row => {
+        // For each row, split by comma and clean each item
+        return row.split(',').map(item => item.trim().replace(/^"|"$/g, ''));
+    });
 
     const rangeParts = range.split(':');
     const isSingleColumn = rangeParts.length > 1 && rangeParts[0].charAt(0) === rangeParts[1].charAt(0);
@@ -71,7 +75,8 @@ async function getRange(sheetConfig, range) {
         if (isSingleColumn) {
             result = result.map(row => row[0] || '');
         } else if (isSingleRow) {
-            result = result[0].map(item => item || '');
+            // Since it's a single row, we just take the first row from the result
+            result = result[0];
         }
     }
     return result;
