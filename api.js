@@ -45,7 +45,7 @@ async function getRange(sheetConfig, range) {
   } catch (error) { 
     console.warn(`! Ошибка получения данных таблицы [${sheetConfig.name}] — неверный API, переход к обходу CORS`);
 
-    const proxy = '46.47.197.210';
+    const proxy = 'https://corsproxy.io/?';
     const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetConfig.id}/export?format=csv&gid=${sheetConfig.gid}`;
     const response2 = await fetch(proxy + encodeURIComponent(csvUrl));
     
@@ -69,17 +69,11 @@ async function getRange(sheetConfig, range) {
 }
 
 // Главная функция получения расписания
-async function getSchedule(dateStr) {
-  const date = new Date(dateStr);
-  const day = date.getDay();
-  
-  // Проверка на выходные
-  if (day === 0 || day === 6) {
-    return [];
+async function getSchedule(dayIndex) {
+  // Если выбрана вся неделя
+  if (dayIndex === 'all') {
+    return await getWeekSchedule();
   }
-  
-  // Преобразуем день недели (понедельник = 0)
-  const dayIndex = (day + 6) % 7;
   
   // Получаем списки классов
   const elemGROUPS = await getRange(days[`day${dayIndex}`], 'D18:AZ18');
@@ -119,7 +113,7 @@ async function getSchedule(dateStr) {
   }
   
   if (firstlessonNUM === -1 || lastlessonNUM === -1) {
-    return [];
+    return { schedule: [], GROUPS, selectedGroup: GROUP };
   }
   
   // Получаем время
@@ -163,4 +157,32 @@ async function getSchedule(dateStr) {
   }));
   
   return { schedule, GROUPS, selectedGroup: GROUP };
+}
+
+// Функция для получения расписания на всю неделю
+async function getWeekSchedule() {
+  const weekSchedule = [];
+  const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
+  
+  // Получаем группы из понедельника
+  const elemGROUPS = await getRange(days['day0'], 'D18:AZ18');
+  const secondGROUPS = await getRange(days['day0'], 'D4:AZ4');
+  const GROUPS = [...elemGROUPS, ...secondGROUPS];
+  
+  let GROUP = getCookie('selectedGroup');
+  if (!GROUP || !GROUPS.includes(GROUP)) {
+    GROUP = GROUPS[0];
+    setCookie('selectedGroup', GROUP, 365);
+  }
+  
+  // Загружаем расписание для каждого дня
+  for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
+    const dayData = await getSchedule(dayIndex);
+    weekSchedule.push({
+      dayName: dayNames[dayIndex],
+      schedule: dayData.schedule
+    });
+  }
+  
+  return { weekSchedule, GROUPS, selectedGroup: GROUP };
 }
