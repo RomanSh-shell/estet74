@@ -119,7 +119,7 @@ async function getSchedule(dayIndex) {
   // Получаем время
   const TIMES = await getRange(
     days[`day${dayIndex}`], 
-    `C${startRow + firstlessonNUM}:C${startRow + lastlessonNUM + 1}`
+    `C${startRow + firstlessonNUM}:C${startRow + lastlessonNUM}`
   );
   
   // Обрабатываем предметы
