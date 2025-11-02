@@ -143,15 +143,20 @@ async function getRange(sheetConfig, range) {
 
 // Главная функция получения расписания
 async function getSchedule(dayIndex) {
+  console.log('🔍 Загрузка расписания для дня:', dayIndex);
+  
   // Если выбрана вся неделя
   if (dayIndex === 'all') {
     return await getWeekSchedule();
   }
   
   // Получаем списки классов
+  console.log('📥 Загрузка списка классов...');
   const elemGROUPS = await getRange(days[`day${dayIndex}`], 'D18:AZ18');
   const secondGROUPS = await getRange(days[`day${dayIndex}`], 'D4:AZ4');
   const GROUPS = [...elemGROUPS, ...secondGROUPS];
+  
+  console.log('📋 Найдено классов:', GROUPS.length, GROUPS);
   
   // Получаем выбранную группу
   let GROUP = getCookie('selectedGroup');
@@ -160,20 +165,28 @@ async function getSchedule(dayIndex) {
     setCookie('selectedGroup', GROUP, 365);
   }
   
+  console.log('🎯 Выбранный класс:', GROUP);
+  
   // Находим индекс группы
   const groupIndex = GROUPS.indexOf(GROUP);
   const column = String.fromCharCode(68 + groupIndex);
+  
+  console.log('📍 Индекс класса:', groupIndex, 'Колонка:', column);
   
   // Определяем часть расписания
   const isElemGroup = elemGROUPS.includes(GROUP);
   const startRow = isElemGroup ? 18 : 4;
   const endRow = isElemGroup ? 29 : 15;
   
+  console.log('📊 Диапазон строк:', startRow, '-', endRow);
+  
   // Получаем уроки
   const LESSONSandROOMS = await getRange(
     days[`day${dayIndex}`], 
     `${column}${startRow}:${column}${endRow}`
   );
+  
+  console.log('📚 Загружено уроков:', LESSONSandROOMS.length, LESSONSandROOMS);
   
   // Находим первый и последний урок
   let firstlessonNUM = LESSONSandROOMS.findIndex(item => item && item.trim());
@@ -185,7 +198,10 @@ async function getSchedule(dayIndex) {
     }
   }
   
+  console.log('🔢 Первый урок:', firstlessonNUM, 'Последний урок:', lastlessonNUM);
+  
   if (firstlessonNUM === -1 || lastlessonNUM === -1) {
+    console.warn('⚠️ Уроки не найдены');
     return { schedule: [], GROUPS, selectedGroup: GROUP };
   }
   
@@ -195,9 +211,14 @@ async function getSchedule(dayIndex) {
     `C${startRow + firstlessonNUM}:C${startRow + lastlessonNUM + 1}`
   );
   
+  console.log('⏰ Время уроков:', TIMES);
+  
   // Обрабатываем предметы
   const relevantLessons = LESSONSandROOMS.slice(firstlessonNUM, lastlessonNUM + 1);
+  console.log('📖 Обработка предметов:', relevantLessons);
+  
   const processedLessons = processSubjects(relevantLessons);
+  console.log('✅ Обработанные предметы:', processedLessons);
   
   // Получаем домашнее задание
   const hometasks = await Promise.all(
@@ -214,10 +235,13 @@ async function getSchedule(dayIndex) {
         const hometask = await getRange(classes[classKey], `'${lesson.subject}'!C2`);
         return hometask[0] || '';
       } catch (error) {
+        console.warn('Не удалось получить ДЗ для', lesson.subject);
         return '';
       }
     })
   );
+  
+  console.log('📝 Домашние задания:', hometasks);
   
   // Формируем финальный массив
   const schedule = processedLessons.map((lesson, index) => ({
@@ -228,6 +252,8 @@ async function getSchedule(dayIndex) {
     metadata: lesson.metadata,
     hometask: hometasks[index] || ''
   }));
+  
+  console.log('✨ Финальное расписание:', schedule);
   
   return { schedule, GROUPS, selectedGroup: GROUP };
 }
