@@ -34,10 +34,15 @@ async function getRange(sheetConfig, range) {
     let result = data.values || [];
 
     const rangeParts = range.split(':');
-    const isSingleColumn = rangeParts[0].charAt(0) === rangeParts[1]?.charAt(0);
+    const isSingleColumn = rangeParts.length > 1 && rangeParts[0].charAt(0) === rangeParts[1].charAt(0);
+    const isSingleRow = rangeParts.length > 1 && rangeParts[0].match(/\d+/)[0] === rangeParts[1].match(/\d+/)[0];
 
-    if (result.length > 0 && isSingleColumn) {
-      result = result.map(row => row[0] || '');
+    if (result.length > 0) {
+        if (isSingleColumn) {
+            result = result.map(row => row[0] || '');
+        } else if (isSingleRow) {
+            result = result[0].map(item => item || '');
+        }
     }
 
     return result;
@@ -46,8 +51,8 @@ async function getRange(sheetConfig, range) {
     console.warn(`! Ошибка получения данных таблицы [${sheetConfig.name}] — неверный API, переход к обходу CORS`);
 
     const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetConfig.id}/export?format=csv&gid=${sheetConfig.gid}`;
-    const proxy = 'https://api.allorigins.win/raw?url=' + csvUrl;
-    const response2 = await fetch(proxy + encodeURIComponent(csvUrl));
+    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(csvUrl);
+    const response2 = await fetch(proxyUrl);
     
     if (!response2.ok) { 
       console.error(`!!! [${sheetConfig.name}]: Не удалось получить данные`);
@@ -59,10 +64,15 @@ async function getRange(sheetConfig, range) {
     let result = csv.split('\n').map(row => row.split(','));
 
     const rangeParts = range.split(':');
-    const isSingleColumn = rangeParts[0].charAt(0) === rangeParts[1]?.charAt(0);
+    const isSingleColumn = rangeParts.length > 1 && rangeParts[0].charAt(0) === rangeParts[1].charAt(0);
+    const isSingleRow = rangeParts.length > 1 && rangeParts[0].match(/\d+/)[0] === rangeParts[1].match(/\d+/)[0];
 
-    if (result.length > 0 && isSingleColumn) {
-      result = result.map(row => row[0] || '');
+    if (result.length > 0) {
+        if (isSingleColumn) {
+            result = result.map(row => row[0] || '');
+        } else if (isSingleRow) {
+            result = result[0].map(item => item || '');
+        }
     }
     return result;
   }
@@ -119,7 +129,7 @@ async function getSchedule(dayIndex) {
   // Получаем время
   const TIMES = await getRange(
     days[`day${dayIndex}`], 
-    `C${startRow + firstlessonNUM}:C${startRow + lastlessonNUM}`
+    `C${startRow + firstlessonNUM}:C${startRow + lastlessonNUM + 1}`
   );
   
   // Обрабатываем предметы
