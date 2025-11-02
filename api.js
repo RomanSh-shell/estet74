@@ -23,65 +23,121 @@ function getCookie(name) {
 
 // Получение данных из Google Sheets
 let FAIL = false;
+
+// Функция для конвертации A1 нотации в индексы
+function a1ToIndex(cell) {
+  const match = cell.match(/^([A-Z]+)(\d+)$/);
+  if (!match) return null;
+  
+  const col = match[1];
+  const row = parseInt(match[2]) - 1;
+  
+  let colIndex = 0;
+  for (let i = 0; i < col.length; i++) {
+    colIndex = colIndex * 26 + (col.charCodeAt(i) - 64);
+  }
+  colIndex--;
+  
+  return { row, col: colIndex };
+}
+
 async function getRange(sheetConfig, range) {
+  // Сначала пробуем API
+  if (sheetConfig.api) {
+    try {
+      const response = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${sheetConfig.id}/values/${range}?key=${sheetConfig.api}`
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        let result = data.values || [];
+
+        const rangeParts = range.split(':');
+        const isSingleColumn = rangeParts[0].charAt(0) === rangeParts[1]?.charAt(0);
+
+        if (result.length > 0 && isSingleColumn) {
+          result = result.map(row => row[0] || '');
+        }
+
+        return result;
+      }
+    } catch (error) {
+      console.warn(`API ключ не работает для [${sheetConfig.name}]`);
+    }
+  }
+  
+  // Если API не сработал, используем CORS proxy
+  console.warn(`Использую CORS proxy для [${sheetConfig.name}]`);
+  
   try {
-    const response = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${sheetConfig.id}/values/${range}?key=${sheetConfig.api}`
-    );
+    // Парсим диапазон
+    const [startCell, endCell] = range.split(':');
+    const start = a1ToIndex(startCell);
+    const end = a1ToIndex(endCell);
     
-    if (!response.ok) throw new Error(`[${sheetConfig.name}]: API failed`);
-    const data = await response.json();
-    let result = data.values || [];
-
-    const rangeParts = range.split(':');
-    const isSingleColumn = rangeParts.length > 1 && rangeParts[0].charAt(0) === rangeParts[1].charAt(0);
-    const isSingleRow = rangeParts.length > 1 && rangeParts[0].match(/\d+/)[0] === rangeParts[1].match(/\d+/)[0];
-
-    if (result.length > 0) {
-        if (isSingleColumn) {
-            result = result.map(row => row[0] || '');
-        } else if (isSingleRow) {
-            result = result[0].map(item => item || '');
-        }
+    if (!start || !end) {
+      throw new Error('Неверный формат диапазона');
     }
-
-    return result;
     
-  } catch (error) { 
-    console.warn(`! Ошибка получения данных таблицы [${sheetConfig.name}] — неверный API, переход к обходу CORS`);
-
+    // Загружаем CSV через proxy
     const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetConfig.id}/export?format=csv&gid=${sheetConfig.gid}`;
-    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(csvUrl);
-    const response2 = await fetch(proxyUrl);
+    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(csvUrl);
     
-    if (!response2.ok) { 
-      console.error(`!!! [${sheetConfig.name}]: Не удалось получить данные`);
-      FAIL = true;
-      throw new Error(`Couldn't get any data from table [${sheetConfig.name}]`);
+    const response = await fetch(proxyUrl);
+    
+    if (!response.ok) {
+      throw new Error('Не удалось загрузить через proxy');
     }
     
-    const csv = await response2.text();
-    // Clean the CSV data by removing quotes and splitting into an array of rows
-    let result = csv.split('\n')
-        .filter(row => row.trim() !== '') // Filter out empty/whitespace-only rows
-        .map(row => {
-        // For each row, split by comma and clean each item
-        return row.split(',').map(item => item.trim().replace(/^"|"$/g, ''));
-    });
-
-    const rangeParts = range.split(':');
-    const isSingleColumn = rangeParts.length > 1 && rangeParts[0].charAt(0) === rangeParts[1].charAt(0);
-    const isSingleRow = rangeParts.length > 1 && rangeParts[0].match(/\d+/)[0] === rangeParts[1].match(/\d+/)[0];
-
-    if (result.length > 0) {
-        if (isSingleColumn) {
-            result = result.map(row => row[0] || '');
-        } else if (isSingleRow) {
-            // Since it's a single row, we just take the first row from the result
-            result = result[0];
+    const csvText = await response.text();
+    const rows = csvText.split('\n').map(row => {
+      // Простой CSV парсер (учитывает кавычки)
+      const cells = [];
+      let cell = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < row.length; i++) {
+        const char = row[i];
+        
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          cells.push(cell.trim());
+          cell = '';
+        } else {
+          cell += char;
         }
+      }
+      cells.push(cell.trim());
+      
+      return cells;
+    });
+    
+    // Извлекаем нужный диапазон
+    const result = [];
+    for (let r = start.row; r <= end.row; r++) {
+      if (r < rows.length) {
+        const rowData = [];
+        for (let c = start.col; c <= end.col; c++) {
+          rowData.push(rows[r][c] || '');
+        }
+        result.push(rowData);
+      }
     }
+    
+    // Если это один столбец, возвращаем плоский массив
+    const isSingleColumn = start.col === end.col;
+    if (isSingleColumn) {
+      return result.map(row => row[0] || '');
+    }
+    
     return result;
+    
+  } catch (error) {
+    console.error(`!!! [${sheetConfig.name}]: Не удалось получить данные`, error);
+    FAIL = true;
+    throw error;
   }
 }
 
