@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSV Parsing Test</title>
+    <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+</head>
+<body>
+    <div id="mocha"></div>
+    <script src="https://unpkg.com/chai/chai.js"></script>
+    <script src="https://unpkg.com/mocha/mocha.js"></script>
+    <script class="mocha-init">
+        mocha.setup('bdd');
+        mocha.checkLeaks();
+    </script>
+    <script src="settings.js"></script>
+    <script src="parser.js"></script>
+    <script src="api.js"></script>
+    <script>
+        const expect = chai.expect;
+
+        describe('CSV Parsing in getRange fallback', () => {
+            it('should correctly parse and clean GROUPS from a simulated CSV response with empty rows', async () => {
+                // Mock the global fetch function to simulate the CORS proxy response
+                const originalFetch = window.fetch;
+                window.fetch = async (url) => {
+                    if (url.startsWith('https://corsproxy.io/?')) {
+                        // This simulates the flawed CSV data with extra quotes and an empty row
+                        const csvData = '"5-1","5-2","6-1"\\n\\n';
+                        return Promise.resolve(new Response(csvData, { status: 200 }));
+                    }
+                    // This simulates the Google Sheets API failing, triggering the fallback
+                    return Promise.reject(new Error('API failed'));
+                };
+
+                // Mock getCookie
+                const originalGetCookie = window.getCookie;
+                window.getCookie = (name) => '5-2';
+
+                const scheduleData = await getSchedule(0); // This will trigger the fallback
+
+                // Restore original functions
+                window.fetch = originalFetch;
+                window.getCookie = originalGetCookie;
+
+                // This test will fail because the current logic doesn't handle empty rows
+                expect(scheduleData.GROUPS).to.deep.equal(['5-1', '5-2', '6-1']);
+                expect(scheduleData.selectedGroup).to.equal('5-2');
+            });
+        });
+    </script>
+    <script class="mocha-exec">
+        mocha.run();
+    </script>
+</body>
+</html>
