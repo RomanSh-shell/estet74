@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Proxy Fallback Test</title>
+    <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+</head>
+<body>
+    <div id="mocha"></div>
+    <script src="https://unpkg.com/chai/chai.js"></script>
+    <script src="https://unpkg.com/mocha/mocha.js"></script>
+    <script class="mocha-init">
+        mocha.setup('bdd');
+        mocha.checkLeaks();
+    </script>
+    <script src="settings.js"></script>
+    <script src="parser.js"></script>
+    <script src="api.js"></script>
+    <script>
+        const expect = chai.expect;
+
+        describe('Proxy Fallback Logic', () => {
+            it('should fetch and parse data correctly using the allorigins proxy', async () => {
+                // Mock fetch to simulate a Google Sheets API failure and a successful proxy response
+                const originalFetch = window.fetch;
+                window.fetch = async (url) => {
+                    if (url.includes('googleapis.com')) {
+                        return Promise.reject(new Error('API failed')); // Simulate API failure
+                    }
+                    if (url.includes('allorigins.win')) {
+                        const csvData = '"5-1","5-2","6-1"\\n';
+                        return Promise.resolve(new Response(csvData, { status: 200 }));
+                    }
+                    return Promise.reject(new Error('Unexpected URL'));
+                };
+
+                // Mock getCookie
+                const originalGetCookie = window.getCookie;
+                window.getCookie = (name) => '5-2';
+
+                const scheduleData = await getSchedule(0);
+
+                // Restore original functions
+                window.fetch = originalFetch;
+                window.getCookie = originalGetCookie;
+
+                expect(scheduleData.GROUPS).to.deep.equal(['5-1', '5-2', '6-1']);
+                expect(scheduleData.selectedGroup).to.equal('5-2');
+            });
+        });
+    </script>
+    <script class="mocha-exec">
+        mocha.run();
+    </script>
+</body>
+</html>

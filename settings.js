@@ -1,10 +1,16 @@
 ////////////////////settings.js//////////////////////
+// --- ИНСТРУКЦИЯ ПО НАСТРОЙКЕ ---
+// 1. Для работы приложения получите API-ключ для Google Sheets.
+//    Инструкция здесь: https://ai2.appinventor.mit.edu/reference/other/googlesheets-api-setup.html
+// 2. Вставьте полученный ключ в поле 'api' для каждой таблицы ниже.
+// ---------------------------
+
 // Конфигурация таблиц Google Sheets
 const days = {
   day0: {
     name: 'Расписание на понедельник',
     id: '1rnYBzXaWr9dI1u8haxakKDiz7KK0IzjJ',
-    api: '',
+    api: '', // <-- ВСТАВЬТЕ СВОЙ КЛЮЧ СЮДА
     gid: '0'
   },
   day1: {
