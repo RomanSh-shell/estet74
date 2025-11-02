@@ -3,33 +3,49 @@ new Vue({
   el: '#app',
   data: {
     schedule: [],
+    weekSchedule: [],
     GROUPS: [],
     selectedGroup: '',
-    selectedDate: new Date().toISOString().split('T')[0],
-    loading: false
+    selectedDay: String(((new Date().getDay() + 6) % 7 + 1) % 7), // Следующий день
+    loading: false,
+    failMode: false,
+    daysData: days,
+    classesData: classes
+  },
+  computed: {
+    isWeekView() {
+      return this.selectedDay === 'all';
+    }
   },
   methods: {
-    formatDate(dateStr) {
-      const date = new Date(dateStr);
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      return date.toLocaleDateString('ru-RU', options);
-    },
-    
     async loadSchedule() {
       this.loading = true;
       try {
-        const data = await getSchedule(this.selectedDate);
-        this.schedule = data.schedule || [];
+        const data = await getSchedule(this.selectedDay === 'all' ? 'all' : parseInt(this.selectedDay));
+        
+        // Проверяем флаг FAIL
+        if (FAIL) {
+          this.failMode = true;
+          return;
+        }
+        
+        if (this.selectedDay === 'all') {
+          this.weekSchedule = data.weekSchedule || [];
+          this.schedule = [];
+        } else {
+          this.schedule = data.schedule || [];
+          this.weekSchedule = [];
+        }
+        
         this.GROUPS = data.GROUPS || [];
         this.selectedGroup = data.selectedGroup || '';
         
-        // Сохраняем выбор в куки
         if (this.selectedGroup) {
           setCookie('selectedGroup', this.selectedGroup, 365);
         }
       } catch (error) {
         console.error('Ошибка загрузки расписания:', error);
-        this.schedule = [];
+        this.failMode = true;
       } finally {
         this.loading = false;
       }
