@@ -4,15 +4,15 @@ const REVERSE_MAP_DATA = (() => {
   const map = {};
   const allVariants = [];
   
-  for (const [normalName, variantList] of Object.entries(SUBJECT_MAP)) {
-    const lowerNormal = normalName.toLowerCase();
+  for (const [normaldata, variantList] of Object.entries(SUBJECT_MAP)) {
+    const lowerNormal = normaldata.toLowerCase();
     allVariants.push(lowerNormal);
-    map[lowerNormal] = normalName;
+    map[lowerNormal] = normaldata;
     
     variantList.forEach(variant => {
       const lowerVariant = variant.toLowerCase();
       allVariants.push(lowerVariant);
-      map[lowerVariant] = normalName;
+      map[lowerVariant] = normaldata;
     });
   }
   
@@ -93,7 +93,7 @@ function parseSubjectParts(str) {
       })
     },
     {
-      regex: /^(.+?)(\d+[а-яё]?)$/u,
+      regex: /^(.+?)(\d+[а-яё]?|\d+\/\d+)$/u,
       handler: (match) => match[1].trim() ? ({
         subject: match[1].trim(),
         metadata: '',
@@ -140,17 +140,22 @@ function correctTypos(parts) {
   }
   
   if (result.room) {
-    const closest = findClosestMatch(
-      result.room.toLowerCase(), 
-      REVERSE_MAP_DATA.allVariants,
-      2
-    );
-    if (closest) {
-      result.room = closest;
+        // Если содержит цифру, мы считаем это номером кабинета и не исправляем.
+        if (!/\d/.test(result.room)) { 
+            const closest = findClosestMatch(
+                result.room.toLowerCase(),
+                REVERSE_MAP_DATA.allVariants,
+                2
+            );
+            if (closest) {
+                // Если найдено ближайшее совпадение в списке предметов,
+                // заменяем нечисловой кабинет на исправленное название.
+                result.room = closest; 
+            }
+        }
     }
-  }
-  
-  return result;
+
+    return result;
 }
 
 // ШАГ 4: Приведение к полному виду

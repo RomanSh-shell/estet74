@@ -1,20 +1,20 @@
 ////////////////////api.js//////////////////////
 // Работа с куки
-function setCookie(name, value, days) {
+function setCookie(data, value, days) {
   let expires = "";
   if (days) {
     const date = new Date();
     date.setTime(date.getTime() + (days * 86400000));
     expires = "; expires=" + date.toUTCString();
   }
-  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  document.cookie = data + "=" + (value || "") + expires + "; path=/";
 }
 
-function getCookie(name) {
+function getCookie(data) {
   const cookies = document.cookie.split(';');
   for (let cookie of cookies) {
-    const [cookieName, cookieValue] = cookie.trim().split('=');
-    if (cookieName === name) {
+    const [cookiedata, cookieValue] = cookie.trim().split('=');
+    if (cookiedata === data) {
       return decodeURIComponent(cookieValue);
     }
   }
@@ -24,25 +24,28 @@ function getCookie(name) {
 // Получение данных из Google Sheets
 let FAIL = false;
 
-// Функция для конвертации A1 нотации в индексы
-function a1ToIndex(cell) {
-  if (typeof cell !== 'string' || cell.trim() === '') {
-    return null; 
-  }
+// Функция для конвертации A2 нотации в индексы
+function a2ToIndex(cell) {
+  if (typeof cell !== 'string' || cell.trim() === '') {
+    return null; 
+  }
 
-  const match = cell.match(/^([A-Z]+)(\d+)$/);
-  if (!match) return null;
-  
-  const col = match[1];
-  const row = parseInt(match[2]) - 1;
-  
-  let colIndex = 0;
-  for (let i = 0; i < col.length; i++) {
-    colIndex = colIndex * 26 + (col.charCodeAt(i) - 64);
-  }
-  colIndex--;
-  
-  return { row, col: colIndex };
+  const match = cell.match(/^([A-Z]+)(\d+)$/);
+  if (!match) return null;
+  
+  const colLetters = match[1]; // Буквы столбца
+  const rowNumber = parseInt(match[2], 10); // Номер строки
+  
+  // Индекс строки в массиве = Номер строки в Sheets - 1
+  const rowIndex = rowNumber - 1; 
+  
+  let colIndex = 0;
+  for (let i = 0; i < colLetters.length; i++) {
+    colIndex = colIndex * 26 + (colLetters.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+  }
+  colIndex--;
+  
+  return { row: rowIndex, col: colIndex };
 }
 
 async function getRange(sheetConfig, range) {
@@ -58,7 +61,7 @@ async function getRange(sheetConfig, range) {
         let result = data.values || [];
 
         const rangeParts = range.split(':');
-        const isSingleColumn = rangeParts[0].charAt(0) === rangeParts[1]?.charAt(0);
+        const isSingleColumn = rangeParts[0].charAt(0) === rangeParts[2]?.charAt(0);
 
         if (result.length > 0 && isSingleColumn) {
           result = result.map(row => row[0] || '');
@@ -67,18 +70,18 @@ async function getRange(sheetConfig, range) {
         return result;
       }
     } catch (error) {
-      console.warn(`API ключ не работает для [${sheetConfig.name}]`);
+      console.warn(`API ключ не работает для [${sheetConfig.data}]`);
     }
   }
   
   // Если API не сработал, используем CORS proxy
-  console.warn(`Использую CORS proxy для [${sheetConfig.name}]`);
+  console.warn(`Использую CORS proxy для [${sheetConfig.data}]`);
   
   try {
     // Парсим диапазон
     const [startCell, endCell] = range.split(':');
-    const start = a1ToIndex(startCell);
-    const end = a1ToIndex(endCell);
+    const start = a2ToIndex(startCell);
+    const end = a2ToIndex(endCell);
     
     if (!start || !end) {
       throw new Error('Неверный формат диапазона');
@@ -101,7 +104,7 @@ async function getRange(sheetConfig, range) {
     const csvText = await response.text();
 
     // !!! УДАЛИТЬ ЭТИ СТРОКИ ПОСЛЕ ОТЛАДКИ !!!  //
-    console.log(`--- ПОЛНЫЙ CSV для ${sheetConfig.name} ---`);
+    console.log(`--- ПОЛНЫЙ CSV для ${sheetConfig.data} ---`);
     console.log(csvText); 
     console.log('-----------------------------------------');
 
@@ -154,166 +157,293 @@ async function getRange(sheetConfig, range) {
     return result;
     
   } catch (error) {
-    console.error(`!!! [${sheetConfig.name}]: Не удалось получить данные`, error);
+    console.error(`!!! [${sheetConfig.data}]: Не удалось получить данные`, error);
     FAIL = true;
     throw error;
   }
 }
 
-// Главная функция получения расписания
-async function getSchedule(dayIndex) {
-  console.log('🔍 Загрузка расписания для дня:', dayIndex);
+// Диапазон ДЗ на листе предмета
+const HOMEWORK_RANGE = 'A1:D6'; 
+
+/**
+ * Ищет текст домашнего задания (колонка D) по метаданным (колонка C).
+ * * @param {object} sheetConfig - Конфигурация таблицы класса.
+ * @param {string} subjectdata - Имя листа (Предмет).
+ * @param {string} targetMetadata - Искомое значение метаданных (C1-C6).
+ * @returns {Promise<string>} - Текст домашнего задания или пустая строка.
+ */
+async function findHomeworkByMetadata(sheetConfig, subjectdata, targetMetadata) {
+  if (!targetMetadata) return ''; 
+    
+  const fullRange = `'${subjectdata}'!${HOMEWORK_RANGE}`;
   
-  // Если выбрана вся неделя
-  if (dayIndex === 'all') {
-    return await getWeekSchedule();
-  }
-  
-  // Получаем списки классов
-  console.log('📥 Загрузка списка классов...');
-  const elemGROUPS = await getRange(days[`day${dayIndex}`], 'D18:AZ18');
-  const secondGROUPS = await getRange(days[`day${dayIndex}`], 'D4:AZ4');
-  let GROUPS = [...elemGROUPS, ...secondGROUPS];
-  GROUPS = GROUPS.filter(groupName => groupName && groupName.trim() !== '');
-  
-  console.log('📋 Найдено классов:', GROUPS.length, GROUPS);
-  
-  // Получаем выбранную группу
-  let GROUP = getCookie('selectedGroup');
-  if (!GROUP || !GROUPS.includes(GROUP)) {
-    GROUP = GROUPS[0];
-    setCookie('selectedGroup', GROUP, 365);
-  }
-  
-  console.log('🎯 Выбранный класс:', GROUP);
-  
-  // Находим индекс группы
-  const groupIndex = GROUPS.indexOf(GROUP);
-  const column = String.fromCharCode(68 + groupIndex);
-  
-  console.log('📍 Индекс класса:', groupIndex, 'Колонка:', column);
-  
-  // Определяем часть расписания
-  const isElemGroup = elemGROUPS.includes(GROUP);
-  const startRow = isElemGroup ? 18 + 1 : 4 + 1;
-  const endRow = isElemGroup ? 29 + 1 : 15 + 1;
-  
-  console.log('📊 Диапазон строк:', startRow, '-', endRow);
-  
-  // Получаем уроки
-  const LESSONSandROOMS = await getRange(
-    days[`day${dayIndex}`], 
-    `${column}${startRow}:${column}${endRow}`
-  );
-  
-  console.log('📚 Загружено уроков:', LESSONSandROOMS.length, LESSONSandROOMS);
-  
-  // Находим первый и последний урок
-  let firstlessonNUM = LESSONSandROOMS.findIndex(item => item && item.trim());
-  let lastlessonNUM = -1;
-  for (let i = LESSONSandROOMS.length - 1; i >= 0; i--) {
-    if (LESSONSandROOMS[i] && LESSONSandROOMS[i].trim()) {
-      lastlessonNUM = i;
-      break;
+  try {
+    const rawData = await getRange(sheetConfig, fullRange);
+    
+    if (!Array.isArray(rawData) || rawData.length === 0) {
+        return ''; 
     }
+    
+    // Поиск строки по метаданным (C-колонка)
+    const foundRow = rawData.find(row => {
+        // row[2] - Метаданные (C), row[3] - Домашка (D)
+        if (row.length < 4) return false;
+        
+        const metadataCol = String(row[2] || '').trim().toLowerCase();
+        
+        return metadataCol === targetMetadata.toLowerCase().trim();
+    });
+
+    // Возвращаем текст домашнего задания (D-колонка)
+    return foundRow ? String(foundRow[3] || '').trim() : '';
+    
+  } catch (error) {
+    console.warn(`Ошибка при поиске ДЗ для ${subjectdata} (Метаданные: ${targetMetadata})`, error);
+    return '';
   }
-  
-  console.log('🔢 Первый урок:', firstlessonNUM, 'Последний урок:', lastlessonNUM);
-  
-  if (firstlessonNUM === -1 || lastlessonNUM === -1) {
-    console.warn('⚠️ Уроки не найдены');
-    return { schedule: [], GROUPS, selectedGroup: GROUP };
-  }
-  
-  // Получаем время
-  const TIMES = await getRange(
-    days[`day${dayIndex}`], 
-    `C${startRow + firstlessonNUM}:C${startRow + lastlessonNUM + 1}`
-  );
-  
-  console.log('⏰ Время уроков:', TIMES);
-  
-  // Обрабатываем предметы
-  const relevantLessons = LESSONSandROOMS.slice(firstlessonNUM, lastlessonNUM + 1);
-  console.log('📖 Обработка предметов:', relevantLessons);
-  
-  const processedLessons = processSubjects(relevantLessons);
-  console.log('✅ Обработанные предметы:', processedLessons);
-  
-  // Получаем домашнее задание
-  const hometasks = await Promise.all(
-    processedLessons.map(async (lesson) => {
-      if (!lesson.subject) return '';
-
-      // !!! ИСПРАВЛЕНИЕ: Используем GROUP целиком и делаем его устойчивым к ошибкам
-      const groupSearchTerm = GROUP ? GROUP.split('-')[0].trim() : '';
-
-      if (!groupSearchTerm) return '';
-
-      const classKey = Object.keys(classes).find(key => 
-        // Ищем ключ, имя которого (например, "5/1 класс") совпадает с частью группы
-        classes[key].name.includes(groupSearchTerm)
-      );
-      
-      if (!classKey) {
-        console.warn(`Не найден класс-ключ для группы: ${GROUP}`);
-        return '';
-      }
-      
-      try {
-        const hometask = await getRange(classes[classKey], `'${lesson.subject}'!C2`);
-        return hometask[0] || '';
-      } catch (error) {
-        console.warn('Не удалось получить ДЗ для', lesson.subject);
-        return '';
-      }
-    })
-  ); 
-  
-  console.log('📝 Домашние задания:', hometasks);
-  
-  // Формируем финальный массив
-  const schedule = processedLessons.map((lesson, index) => ({
-    lesson: firstlessonNUM + index + 1,
-    time: TIMES[index] || '',
-    subject: lesson.subject,
-    room: lesson.room,
-    metadata: lesson.metadata,
-    hometask: hometasks[index] || ''
-  }));
-  
-  console.log('✨ Финальное расписание:', schedule);
-  
-  return { schedule, GROUPS, selectedGroup: GROUP };
 }
 
-// Функция для получения расписания на всю неделю
+// Главная функция получения расписания
+async function getSchedule(dayIndex) {
+    console.log('🔍 Загрузка расписания для дня:', dayIndex);
+    
+    if (dayIndex === 'all') {
+        return await getWeekSchedule(); 
+    }
+    
+    const dayConfig = days[`day${dayIndex}`]; 
+    let GROUP = getCookie('selectedGroup');
+
+    // Переменные для хранения данных, чтобы они были доступны вне try/catch 
+    let GROUPS = [];
+    let processedLessons = [];
+    let TIMES = [];
+    let hometasks = []; // <--- ИСПРАВЛЕНИЕ 1: Объявление hometasks
+
+    try {
+        // --- ЗАГРУЗКА ГРУПП ---
+        const elemGROUPS = await getRange(dayConfig, 'D28:AZ28');
+        const secondGROUPS = await getRange(dayConfig, 'D4:AZ4');
+        GROUPS = [...(elemGROUPS || []), ...(secondGROUPS || [])]
+            .map(groupdata => String(groupdata || '').trim())
+            .filter(groupdata => groupdata !== '');
+        
+        if (!GROUP || !GROUPS.includes(GROUP)) {
+            GROUP = GROUPS[0];
+            setCookie('selectedGroup', GROUP, 365);
+        }
+        
+        if (GROUPS.length === 0 || !GROUP) {
+            throw new Error("Не удалось загрузить список групп или выбрать группу.");
+        }
+        
+        const groupIndex = GROUPS.indexOf(GROUP);
+        const column = String.fromCharCode(68 + groupIndex);
+        const isElemGroup = elemGROUPS.map(g => String(g || '').trim()).includes(GROUP);
+        const startRow = isElemGroup ? 19 : 5;
+        const endRow = isElemGroup ? 30 : 16;
+        
+        console.log(`🎯 Выбранный класс: ${GROUP}`);
+        console.log(`📍 Индекс класса: ${groupIndex} Колонка: ${column}`);
+        console.log(`📊 Диапазон строк: ${startRow} - ${endRow}`);
+        
+        // --- ЗАГРУЗКА УРОКОВ ---
+        const LESSONSandROOMS = await getRange(
+            dayConfig, 
+            `${column}${startRow}:${column}${endRow}`
+        );
+        
+        console.log('📝 Исходные ячейки (LESSONSandROOMS):', LESSONSandROOMS);
+        let firstlessonNUM = -1
+        let lastlessonNUM = -1;
+        firstlessonNUM = LESSONSandROOMS.findIndex(item => String(item || '').trim());
+        for (let i = LESSONSandROOMS.length - 1; i >= 0; i--) {
+            if (String(LESSONSandROOMS[i] || '').trim()) {
+                lastlessonNUM = i;
+                break;
+            }
+        }
+
+        if (firstlessonNUM === -1 || lastlessonNUM === -1 || lastlessonNUM < firstlessonNUM) {
+            throw new Error('Уроки не найдены или расписание пустое.');
+        }
+
+        TIMES = await getRange(
+            dayConfig, 
+            `C${startRow + firstlessonNUM}:C${startRow + lastlessonNUM}` 
+        );
+        
+        const relevantLessons = LESSONSandROOMS.slice(firstlessonNUM, lastlessonNUM + 1); 
+        processedLessons = processSubjects(relevantLessons, TIMES); 
+
+        console.log(`📚 Загружено уроков: ${relevantLessons.length} (${processedLessons.length}) ${relevantLessons.slice(0, 4)}`);
+        console.log(`🔢 Первый урок: ${firstlessonNUM} Последний урок: ${lastlessonNUM}`);
+        console.log(`⏰ Время уроков: (${TIMES.length}) ${TIMES.slice(0, 4)}`);
+        console.log(`✅ Обработанные предметы: (${processedLessons.length}) ${processedLessons.slice(0, 4)}`);
+
+        // -----------------------------------------------------
+        // 3. ПОЛУЧЕНИЕ ДОМАШНЕГО ЗАДАНИЯ
+        // -----------------------------------------------------
+
+        let classConfig = null;
+        let groupKey = GROUP; 
+
+        // 1. Преобразуем имя группы в формат ключа (например, "class5_1")
+        groupKey = groupKey
+            .toLowerCase()
+            .replace(/[^\d\-\/\_]/g, ''); 
+
+        // 2. Приводим все разделители к единому стандарту: подчеркиванию.
+        groupKey = groupKey
+            .replace(/-/g, '_')   
+            .replace(/\//g, '_'); 
+
+        // 3. Удаляем лишние подчеркивания в начале, конце и повторяющиеся
+        groupKey = groupKey.replace(/_+/g, '_'); 
+        groupKey = groupKey.replace(/^_|_$/g, '');
+
+        // 4. Добавляем префикс "class"
+        groupKey = 'class' + groupKey; 
+
+        console.log('🔑 Ожидаемый ключ конфигурации:', groupKey);
+
+        // 5. Ищем конфигурацию по сформированному ключу
+        classConfig = classes[groupKey]; 
+
+        if (!classConfig) {
+          console.warn(`Не найдена конфигурация таблицы ДЗ для ключа: ${groupKey} (Ориг. группа: ${GROUP})`);
+        }
+
+        if (classConfig && classConfig.homework) {
+            const classHomeworkMap = classConfig.homework; 
+
+            // Перебираем обработанные уроки и добавляем поля ДЗ
+            processedLessons = processedLessons.map(lesson => {
+                if (!lesson.subject) {
+                    return lesson;
+                }
+              
+                // 1. Формируем ключ для поиска ДЗ (нормализованное имя предмета)
+                const subjectKey = lesson.subject.toLowerCase();
+
+                // 2. Ищем запись ДЗ
+                const homeworkEntry = classHomeworkMap[subjectKey];
+              
+                // 3. Присоединяем ДЗ, используя вашу новую структуру
+                if (homeworkEntry) {
+                    lesson.hometask = homeworkEntry.hometask || null;
+                    lesson.homeworkDate = homeworkEntry.date || null;
+                    lesson.homeworkMeta = homeworkEntry.metadata || null;
+                
+                    // Логирование для отладки
+                    console.log(`✅ ДЗ найдено для ${lesson.subject}: ${lesson.hometask}`);
+                } else {
+                    // Инициализируем поля, если ДЗ нет
+                    lesson.hometask = null;
+                    lesson.homeworkDate = null;
+                    lesson.homeworkMeta = null;
+                }
+              
+                return lesson;
+            });
+        }        
+        // -----------------------------------------------------
+        // 4. ФИНАЛЬНАЯ СБОРКА 
+        // -----------------------------------------------------
+
+        const finalSchedule = processedLessons.map((lesson, index) => {
+            // ИСПРАВЛЕНИЕ 2: Гарантируем строковые значения для Vue
+            const time = String(TIMES[index] || '').trim();
+            
+            return {
+                lesson: index + 1, 
+                time: time,
+                subject: String(lesson.subject || '').trim(),
+                room: String(lesson.room || '').trim(),
+                metadata: String(lesson.metadata || '').trim(),
+                hometask: String(hometasks[index] || '').trim()
+            };
+        });
+        console.log('Уроки:', JSON.stringify(processedLessons));
+        console.log('Домашние задания:', JSON.stringify(homeworkArray));
+        return { schedule: finalSchedule, GROUPS, selectedGroup: GROUP };
+
+    } catch (error) {
+        console.error('⚠️ Критическая ошибка при обработке расписания:', error.message);
+        
+        // --- РЕЗЕРВНАЯ ЗАГРУЗКА ---
+        try {
+            // Предполагаем, что dayConfig — это объект с метаданными для вызова getRange
+            const backupData = await getRange(dayConfig, 'D22'); 
+            const message = Array.isArray(backupData) ? String(backupData[0] || '').trim() : String(backupData || '').trim();
+
+            if (message) {
+                 console.log('✅ Загружено запасное сообщение из D22:', message);
+                 
+                 const backupSchedule = [{
+                     lesson: 1, 
+                     time: "", 
+                     subject: message, 
+                     room: "", 
+                     metadata: "Сообщение", 
+                     hometask: "" 
+                 }];
+                 
+                 return { schedule: backupSchedule, GROUPS, selectedGroup: GROUP || null };
+            }
+        } catch (e) {
+            console.error('❌ Не удалось загрузить запасное сообщение из D22:', e.message);
+        }
+
+        // Возврат пустого расписания при полной ошибке
+        return { schedule: [], GROUPS, selectedGroup: GROUP || null };
+    }
+}
+
+// 3. Функция для получения расписания на всю неделю
+
 async function getWeekSchedule() {
-  const weekSchedule = [];
-  const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
+  const weekSchedule = [];
+  const daydatas = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
   
-  const elemGROUPS_raw = await getRange(days[`day${dayIndex}`], 'D4:AZ4');
-  const secondGROUPS_raw = await getRange(days[`day${dayIndex}`], 'D18:AZ18');
-
-  const elemGROUPS = elemGROUPS_raw.filter(g => g && g.trim());
-  const secondGROUPS = secondGROUPS_raw.filter(g => g && g.trim());
-
-  let GROUPS = [...elemGROUPS, ...secondGROUPS];
+  // Берем конфигурацию первого дня для загрузки общего списка групп
+  const dayConfig = days[`day0`]; 
   
+  let GROUPS = [];
   let GROUP = getCookie('selectedGroup');
-  if (!GROUP || !GROUPS.includes(GROUP)) {
-    GROUP = GROUPS[0];
-    setCookie('selectedGroup', GROUP, 365);
-  }
   
+  try {
+      const elemGROUPS_raw = await getRange(dayConfig, 'D28:AZ28');
+      const secondGROUPS_raw = await getRange(dayConfig, 'D4:AZ4');
+      
+      // БЕЗОПАСНАЯ ФИЛЬТРАЦИЯ
+      GROUPS = [...(elemGROUPS_raw || []), ...(secondGROUPS_raw || [])]
+          .map(g => String(g || '').trim())
+          .filter(g => g !== '');
+          
+      if (!GROUP || !GROUPS.includes(GROUP)) {
+        GROUP = GROUPS[0];
+        setCookie('selectedGroup', GROUP, 365);
+      }
+      
+  } catch (error) {
+      console.error('Ошибка загрузки списка групп для недели:', error);
+      // Если не смогли загрузить группы, недельное расписание не сработает
+      return { weekSchedule: [], GROUPS: [], selectedGroup: null };
+  }
+  
   // Загружаем расписание для каждого дня
-  for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
-    const dayData = await getSchedule(dayIndex);
+  for (let dayIndex = 0; dayIndex < daydatas.length; dayIndex++) {
+    // Вызываем getSchedule для каждого дня
+    const dayData = await getSchedule(dayIndex); 
+    
     weekSchedule.push({
-      dayName: dayNames[dayIndex],
+      daydata: daydatas[dayIndex],
       schedule: dayData.schedule
     });
   }
-  
-  return { weekSchedule, GROUPS, selectedGroup: GROUP };
+  
+  return { weekSchedule, GROUPS, selectedGroup: GROUP };
 }
+
