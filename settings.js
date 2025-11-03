@@ -5,31 +5,31 @@ const days = {
     name: 'Расписание на понедельник',
     id: '1rnYBzXaWr9dI1u8haxakKDiz7KK0IzjJ',
     api: '',
-    gid: '0'
+    gid: '396671462'
   },
   day1: {
     name: 'Расписание на вторник',
     id: '17Oz-Ld6NHA57SEKCiuAWQNYYngJ3_7LB',
     api: '',
-    gid: '0'
+    gid: '1000062797'
   },
   day2: {
     name: 'Расписание на среду',
     id: '1Xt-HxVTrKzp4_3NcaBGbTYxKp_PGLeN2',
     api: '',
-    gid: '0'
+    gid: '1112063833'
   },
   day3: {
     name: 'Расписание на четверг',
     id: '1oessjK-CwC-p_Kf0y1be61ZRwHq4jd4l',
     api: '',
-    gid: '0'
+    gid: '820887987'
   },
   day4: {
     name: 'Расписание на пятницу',
     id: '1_m0C3uWV3XvPLAko0KZSJWq5JMMHe8HH',
     api: '',
-    gid: '0'
+    gid: '1260478207'
   }
 };
 
