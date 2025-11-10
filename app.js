@@ -6,7 +6,11 @@ new Vue({
     weekSchedule: [],
     GROUPS: [],
     selectedGroup: '',
-    selectedDay: String(((new Date().getDay() + 6) % 7 + 1) % 7), // Следующий день
+    // Гарантируем, что день недели находится в диапазоне 0 (Пн) - 4 (Пт)
+    selectedDay: (() => {
+        const todayIndex = new Date().getDay();
+        return String(todayIndex >= 1 && todayIndex <= 5 ? todayIndex - 1 : "all");
+    })(),
     loading: false,
     failMode: false,
     daysData: days,

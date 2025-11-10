@@ -1,3 +1,4 @@
+
 ////////////////////settings.js//////////////////////
 // Конфигурация таблиц Google Sheets
 const days = {
@@ -35,939 +36,818 @@ const days = {
 
 const classes = {
   class5_1: {
+    sheetId: "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
+    api: "class5_1_api",
     "Русский_язык": {
-      "sheetId": "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "История_нашего_края": {
-      "sheetId": "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
-      "gid": "2047340950",
-      "name": "История нашего края",
-      "api": "NoAPIfor1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI"
+      gid: 2047340950,
+      range: "C3",
+      name: "История нашего края"
     },
     "География": {
-      "sheetId": "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1mywfGN2EP0z2FIlWnmfVOwdbZoP1_I_tsTU0lqd5UfI"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     }
   },
   class5_2: {
+    sheetId: "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
+    api: "class5_2_api",
     "Русский_язык": {
-      "sheetId": "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "История_нашего_края": {
-      "sheetId": "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
-      "gid": "652732812",
-      "name": "История нашего края",
-      "api": "NoAPIfor1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ"
+      gid: 652732812,
+      range: "C3",
+      name: "История нашего края"
     },
     "География": {
-      "sheetId": "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1dYiQ0SiJGvlDGjyjfBIgMl1vgAdloSLf_kjkPlKSKOQ"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     }
   },
   class6_1: {
+    sheetId: "1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w",
+    api: "class6_1_api",
     "Русский_язык": {
-      "sheetId": "1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "География": {
-      "sheetId": "1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1zov6d36gXBvqY5Z5p-iNppVFMidI-dDsOYwfLaOLG5w"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     }
   },
   class6_2: {
+    sheetId: "1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU",
+    api: "class6_2_api",
     "Русский_язык": {
-      "sheetId": "1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "География": {
-      "sheetId": "1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1C_CxD9fUXJ5OtgiLmRwwGvIQd7MxE7uziAdWehGnkpU"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     }
   },
   class7_1: {
+    sheetId: "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
+    api: "class7_1_api",
     "Русский_язык": {
-      "sheetId": "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "География": {
-      "sheetId": "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor1uufK-YSTwzuOsI1WD8Ay8kAgDI-owGQ6pofxTaxPU1s"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     }
   },
   class7_2: {
+    sheetId: "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
+    api: "class7_2_api",
     "Русский_язык": {
-      "sheetId": "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "География": {
-      "sheetId": "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor14Kug6YztYre6iKs-qH47Paf-dwcJse0JW-zSLekhSxY"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     }
   },
   class8_1: {
+    sheetId: "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
+    api: "class8_1_api",
     "Русский_язык": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "Обществознание": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "835052542",
-      "name": "Обществознание",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 835052542,
+      range: "C3",
+      name: "Обществознание"
     },
     "География": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     },
     "Химия": {
-      "sheetId": "11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU",
-      "gid": "1532686743",
-      "name": "Химия",
-      "api": "NoAPIfor11LKk9u8OyVdphPMA8dIVNGkz1EQVEYovFc_ZChayWtU"
+      gid: 1532686743,
+      range: "C3",
+      name: "Химия"
     }
   },
   class8_2: {
+    sheetId: "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
+    api: "class8_2_api",
     "Русский_язык": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "Обществознание": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "482148264",
-      "name": "Обществознание",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 482148264,
+      range: "C3",
+      name: "Обществознание"
     },
     "География": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     },
     "Химия": {
-      "sheetId": "1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q",
-      "gid": "1532686743",
-      "name": "Химия",
-      "api": "NoAPIfor1wQ13kwq009UbhaVyTgVIx8XQY1PiuWQrr6KBOx4G52Q"
+      gid: 1532686743,
+      range: "C3",
+      name: "Химия"
     }
   },
   class8_3: {
+    sheetId: "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
+    api: "class8_3_api",
     "Русский_язык": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "Обществознание": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "820658772",
-      "name": "Обществознание",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 820658772,
+      range: "C3",
+      name: "Обществознание"
     },
     "География": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     },
     "Химия": {
-      "sheetId": "1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc",
-      "gid": "1532686743",
-      "name": "Химия",
-      "api": "NoAPIfor1_Etr2b0OURFaJZAbXgj1l3TDKk7X0469CiMysGKEvsc"
+      gid: 1532686743,
+      range: "C3",
+      name: "Химия"
     }
   },
   class9_1: {
+    sheetId: "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
+    api: "class9_1_api",
     "Русский_язык": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "Обществознание": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "1518102440",
-      "name": "Обществознание",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 1518102440,
+      range: "C3",
+      name: "Обществознание"
     },
     "География": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     },
     "Химия": {
-      "sheetId": "1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0",
-      "gid": "1532686743",
-      "name": "Химия",
-      "api": "NoAPIfor1FMNCOHLbIRZrL822scLvZPiAvHnQY4bKr0YRGhNJ_n0"
+      gid: 1532686743,
+      range: "C3",
+      name: "Химия"
     }
   },
   class9_2: {
+    sheetId: "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
+    api: "class9_2_api",
     "Русский_язык": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "Обществознание": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "370783621",
-      "name": "Обществознание",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 370783621,
+      range: "C3",
+      name: "Обществознание"
     },
     "География": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     },
     "Химия": {
-      "sheetId": "10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw",
-      "gid": "1532686743",
-      "name": "Химия",
-      "api": "NoAPIfor10mwDQQxPaDd8t00kwQn7e593SBeDB2YLHxjHbcsW-Mw"
+      gid: 1532686743,
+      range: "C3",
+      name: "Химия"
     }
   },
   class10_1: {
+    sheetId: "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
+    api: "class10_1_api",
     "Русский_язык": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "Обществознание": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "370783621",
-      "name": "Обществознание",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 370783621,
+      range: "C3",
+      name: "Обществознание"
     },
     "География": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     },
     "Химия": {
-      "sheetId": "1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g",
-      "gid": "1532686743",
-      "name": "Химия",
-      "api": "NoAPIfor1PeSWxzLIlDNhT2ujqQz0mKnCAdt0iSQyo_XQMMeN2-g"
+      gid: 1532686743,
+      range: "C3",
+      name: "Химия"
     }
   },
   class10_2: {
+    sheetId: "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
+    api: "class10_2_api",
     "Русский_язык": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "Обществознание": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "370783621",
-      "name": "Обществознание",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 370783621,
+      range: "C3",
+      name: "Обществознание"
     },
     "География": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     },
     "Химия": {
-      "sheetId": "1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw",
-      "gid": "1532686743",
-      "name": "Химия",
-      "api": "NoAPIfor1-yU65SGDMPCSI59P4eVRNkcMtaxDdToGqG2-7Ay89Iw"
+      gid: 1532686743,
+      range: "C3",
+      name: "Химия"
     }
   },
   class11_1: {
+    sheetId: "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
+    api: "class11_1_api",
     "Русский_язык": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "Обществознание": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "370783621",
-      "name": "Обществознание",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 370783621,
+      range: "C3",
+      name: "Обществознание"
     },
     "География": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     },
     "Химия": {
-      "sheetId": "1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s",
-      "gid": "1532686743",
-      "name": "Химия",
-      "api": "NoAPIfor1D7AjubNMiNcZuKU0aA7MOvxGHOD8RFKYH6WvtMGua0s"
+      gid: 1532686743,
+      range: "C3",
+      name: "Химия"
     }
   },
   class11_2: {
+    sheetId: "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
+    api: "class11_2_api",
     "Русский_язык": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "0",
-      "name": "Русский язык",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 0,
+      range: "C3",
+      name: "Русский язык"
     },
     "Литература": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "329233048",
-      "name": "Литература",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 329233048,
+      range: "C3",
+      name: "Литература"
     },
     "Английский_язык": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "171674353",
-      "name": "Английский язык",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 171674353,
+      range: "C3",
+      name: "Английский язык"
     },
     "Математика": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "624656389",
-      "name": "Математика",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 624656389,
+      range: "C3",
+      name: "Математика"
     },
     "Информатика": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "1421083680",
-      "name": "Информатика",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 1421083680,
+      range: "C3",
+      name: "Информатика"
     },
     "История": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "801015494",
-      "name": "История",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 801015494,
+      range: "C3",
+      name: "История"
     },
     "Обществознание": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "370783621",
-      "name": "Обществознание",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 370783621,
+      range: "C3",
+      name: "Обществознание"
     },
     "География": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "696023630",
-      "name": "География",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 696023630,
+      range: "C3",
+      name: "География"
     },
     "Биология": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "611403980",
-      "name": "Биология",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 611403980,
+      range: "C3",
+      name: "Биология"
     },
     "Физика": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "340190869",
-      "name": "Физика",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 340190869,
+      range: "C3",
+      name: "Физика"
     },
     "Химия": {
-      "sheetId": "19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM",
-      "gid": "1532686743",
-      "name": "Химия",
-      "api": "NoAPIfor19WzVvOWy41xkinaKqjlGUmZu6htaGDLPuAstW-eeqVM"
+      gid: 1532686743,
+      range: "C3",
+      name: "Химия"
     }
   }
 };
