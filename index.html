@@ -10,13 +10,12 @@
 </head>
 <body>
     <div id="app">
-        <!-- Основной интерфейс -->
         <div class="container">
             <header>
                 <h1><i class="fas fa-calendar-alt"></i> Электронный дневник</h1>
                 <div class="subtitle">Просмотр расписания и домашних заданий</div>
             </header>
-            
+
             <div class="filters-row">
                 <div class="filter-group">
                     <label for="group"><i class="fas fa-users"></i> Класс:</label>
@@ -26,7 +25,7 @@
                         </option>
                     </select>
                 </div>
-                
+
                 <div class="filter-group">
                     <label for="day"><i class="fas fa-calendar-day"></i> День:</label>
                     <select id="day" v-model="selectedDay" @change="loadSchedule">
@@ -39,14 +38,87 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="content">
                 <div class="section-title">
                     <i class="fas fa-clock"></i> Расписание уроков и домашние задания
                 </div>
-                
-                <!-- Fallback интерфейс при ошибке -->
-                <div v-if="failMode" class="fallback-interface">
+
+                <div v-if="loading" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Загрузка...
+                </div>
+
+                <table class="schedule-table" v-else-if="!isWeekView && schedule.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Урок</th>
+                            <th>Время</th>
+                            <th>Предмет</th>
+                            <th>Кабинет</th>
+                            <th>Домашнее задание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="lesson in schedule" :key="lesson.lesson" :class="{ 'empty-lesson': !lesson.subject }">
+                            <td>{{ lesson.lesson }}</td>
+                            <td class="lesson-time">{{ lesson.time }}</td>
+                            <td>
+                                <div class="lesson-subject" v-if="lesson.subject">
+                                    {{ lesson.subject }}
+                                    <span v-if="lesson.metadata" class="lesson-metadata">({{ lesson.metadata }})</span>
+                                </div>
+                                <span v-else style="color: #999; font-style: italic;">Окно</span>
+                            </td>
+                            <td class="lesson-room">{{ lesson.room }}</td>
+                            <td>
+                                <div class="hometask" v-if="lesson.hometask">
+                                    {{ lesson.hometask }}
+                                </div>
+                                <span v-else style="color: #999; font-style: italic;">Не задано</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div v-else-if="isWeekView && weekSchedule.length > 0" class="week-view">
+                    <div v-for="day in weekSchedule" :key="day.dayName" class="day-block">
+                        <h3 class="day-title">{{ day.dayName }}</h3>
+                        <table class="schedule-table" v-if="day.schedule.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Урок</th>
+                                    <th>Время</th>
+                                    <th>Предмет</th>
+                                    <th>Кабинет</th>
+                                    <th>Домашнее задание</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="lesson in day.schedule" :key="lesson.lesson" :class="{ 'empty-lesson': !lesson.subject }">
+                                    <td>{{ lesson.lesson }}</td>
+                                    <td class="lesson-time">{{ lesson.time }}</td>
+                                    <td>
+                                        <div class="lesson-subject" v-if="lesson.subject">
+                                            {{ lesson.subject }}
+                                            <span v-if="lesson.metadata" class="lesson-metadata">({{ lesson.metadata }})</span>
+                                        </div>
+                                        <span v-else style="color: #999; font-style: italic;">Окно</span>
+                                    </td>
+                                    <td class="lesson-room">{{ lesson.room }}</td>
+                                    <td>
+                                        <div class="hometask" v-if="lesson.hometask">
+                                            {{ lesson.hometask }}
+                                        </div>
+                                        <span v-else style="color: #999; font-style: italic;">Не задано</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div v-else class="no-data">Уроков нет</div>
+                    </div>
+                </div>
+
+                <div v-else class="fallback-interface">
                     <div class="row">
                         <div class="col-md-12 pd15">
                             <h2><strong>Расписание уроков</strong></h2>
@@ -54,7 +126,7 @@
                         <div class="col-md-12 pd15">
                             <div class="index-menu">
                                 <a v-for="(dayData, key) in daysData" :key="key" target="_blank" :href="'https://docs.google.com/spreadsheets/d/' + dayData.id + '/edit'">
-                                    <div class="vh-center">{{ dayData.name.replace('Расписание на ', '') }}</div>
+                                    <div class="vh-center">{{ dayData.name ? dayData.name.replace('Расписание на ', '') : 'День' }}</div>
                                 </a>
                             </div>
                         </div>
@@ -62,112 +134,25 @@
                             В расписании возможны изменения день в день по независящим от администрации причинам.
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-12 pd15">
                             <h2><strong>Домашние задания</strong></h2>
                         </div>
                         <div class="col-md-12 pd15">
                             <div class="index-menu">
-                                <a v-for="(classData, key) in classesData" :key="key" target="_blank" :href="'https://docs.google.com/spreadsheets/d/' + classData.id">
-                                    <div class="vh-center">{{ classData.name.replace(', дз', '') }}</div>
+                                <a v-for="(classData, key) in classesData" :key="key" target="_blank" :href="'https://docs.google.com/spreadsheets/d/' + classData.sheetId">
+                                    <div class="vh-center">{{ key.replace('class', '').replace('_', '-') }}</div>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Нормальный интерфейс -->
-                <div v-else>
-                    <div v-if="loading" class="loading">
-                        <i class="fas fa-spinner fa-spin"></i> Загрузка...
-                    </div>
-                    
-                    <!-- Одиночный день -->
-                    <table class="schedule-table" v-else-if="!isWeekView && schedule.length > 0">
-                        <thead>
-                            <tr>
-                                <th>Урок</th>
-                                <th>Время</th>
-                                <th>Предмет</th>
-                                <th>Кабинет</th>
-                                <th>Домашнее задание</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="lesson in schedule" :key="lesson.lesson" :class="{ 'empty-lesson': !lesson.subject }">
-                                <td>{{ lesson.lesson }}</td>
-                                <td class="lesson-time">{{ lesson.time }}</td>
-                                <td>
-                                    <div class="lesson-subject" v-if="lesson.subject">
-                                        {{ lesson.subject }}
-                                        <span v-if="lesson.metadata" class="lesson-metadata">({{ lesson.metadata }})</span>
-                                    </div>
-                                    <span v-else style="color: #999; font-style: italic;">Окно</span>
-                                </td>
-                                <td class="lesson-room">{{ lesson.room }}</td>
-                                <td>
-                                    <div class="hometask" v-if="lesson.hometask">
-                                        {{ lesson.hometask }}
-                                    </div>
-                                    <span v-else style="color: #999; font-style: italic;">Не задано</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <!-- Вся неделя -->
-                    <div v-else-if="isWeekView && weekSchedule.length > 0" class="week-view">
-                        <div v-for="day in weekSchedule" :key="day.dayName" class="day-block">
-                            <h3 class="day-title">{{ day.dayName }}</h3>
-                            <table class="schedule-table" v-if="day.schedule.length > 0">
-                                <thead>
-                                    <tr>
-                                        <th>Урок</th>
-                                        <th>Время</th>
-                                        <th>Предмет</th>
-                                        <th>Кабинет</th>
-                                        <th>Домашнее задание</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="lesson in day.schedule" :key="lesson.lesson" :class="{ 'empty-lesson': !lesson.subject }">
-                                        <td>{{ lesson.lesson }}</td>
-                                        <td class="lesson-time">{{ lesson.time }}</td>
-                                        <td>
-                                            <div class="lesson-subject" v-if="lesson.subject">
-                                                {{ lesson.subject }}
-                                                <span v-if="lesson.metadata" class="lesson-metadata">({{ lesson.metadata }})</span>
-                                            </div>
-                                            <span v-else style="color: #999; font-style: italic;">Окно</span>
-                                        </td>
-                                        <td class="lesson-room">{{ lesson.room }}</td>
-                                        <td>
-                                            <div class="hometask" v-if="lesson.hometask">
-                                                {{ lesson.hometask }}
-                                            </div>
-                                            <span v-else style="color: #999; font-style: italic;">Не задано</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div v-else class="no-data">Уроков нет</div>
-                        </div>
-                    </div>
-                    
-                    <div class="no-data" v-else>
-                        <i class="fas fa-calendar-times"></i> На выбранную дату уроков нет
-                    </div>
-                </div>
-            </div>
-            
-            <footer>
+
+            </div> <footer>
                 <p>Система электронного дневника © 2024</p>
             </footer>
-        </div>
-    </div>
-
-    <script src="settings.js"></script>
+        </div> </div> <script src="settings.js"></script>
     <script src="parser.js"></script>
     <script src="api.js"></script>
     <script src="app.js"></script>

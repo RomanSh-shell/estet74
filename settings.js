@@ -1,6 +1,15 @@
-
 ////////////////////settings.js//////////////////////
-// Конфигурация таблиц Google Sheets
+// Все настройки модуля, Списки таблиц и предметов //
+/////////////////////////////////////////////////////
+
+// --- НАСТРОЙКИ CLOUDFLARE WORKER ---
+// Вставьте сюда ссылку, которую даёт Cloudflare после деплоя
+const WORKER_HOST = "https://estet74-proxy.coneco-neco.workers.dev/";
+
+// Это "Упрощенный режим" или режим ошибки.
+const INITIAL_FAIL_MODE = false; // <-- Если здесь true, возвращаем ручной выбор гугл-таблиц
+
+// --- Конфигурация таблиц Google Sheets ---
 const days = {
   day0: {
     name: 'Расписание на понедельник',
@@ -40,47 +49,56 @@ const classes = {
     api: "class5_1_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "История_нашего_края": {
       gid: 2047340950,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История нашего края"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     }
   },
@@ -89,47 +107,56 @@ const classes = {
     api: "class5_2_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "История_нашего_края": {
       gid: 652732812,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История нашего края"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     }
   },
@@ -138,42 +165,50 @@ const classes = {
     api: "class6_1_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     }
   },
@@ -182,42 +217,50 @@ const classes = {
     api: "class6_2_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     }
   },
@@ -226,47 +269,56 @@ const classes = {
     api: "class7_1_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     }
   },
@@ -275,47 +327,56 @@ const classes = {
     api: "class7_2_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     }
   },
@@ -324,57 +385,68 @@ const classes = {
     api: "class8_1_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "Обществознание": {
       gid: 835052542,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Обществознание"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     },
     "Химия": {
       gid: 1532686743,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Химия"
     }
   },
@@ -383,57 +455,68 @@ const classes = {
     api: "class8_2_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "Обществознание": {
       gid: 482148264,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Обществознание"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     },
     "Химия": {
       gid: 1532686743,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Химия"
     }
   },
@@ -442,57 +525,68 @@ const classes = {
     api: "class8_3_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "Обществознание": {
       gid: 820658772,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Обществознание"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     },
     "Химия": {
       gid: 1532686743,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Химия"
     }
   },
@@ -501,57 +595,68 @@ const classes = {
     api: "class9_1_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "Обществознание": {
       gid: 1518102440,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Обществознание"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     },
     "Химия": {
       gid: 1532686743,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Химия"
     }
   },
@@ -560,57 +665,68 @@ const classes = {
     api: "class9_2_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "Обществознание": {
       gid: 370783621,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Обществознание"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     },
     "Химия": {
       gid: 1532686743,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Химия"
     }
   },
@@ -619,57 +735,68 @@ const classes = {
     api: "class10_1_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "Обществознание": {
       gid: 370783621,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Обществознание"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     },
     "Химия": {
       gid: 1532686743,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Химия"
     }
   },
@@ -678,57 +805,68 @@ const classes = {
     api: "class10_2_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "Обществознание": {
       gid: 370783621,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Обществознание"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     },
     "Химия": {
       gid: 1532686743,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Химия"
     }
   },
@@ -737,57 +875,68 @@ const classes = {
     api: "class11_1_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "Обществознание": {
       gid: 370783621,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Обществознание"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     },
     "Химия": {
       gid: 1532686743,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Химия"
     }
   },
@@ -796,63 +945,74 @@ const classes = {
     api: "class11_2_api",
     "Русский_язык": {
       gid: 0,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Русский язык"
     },
     "Литература": {
       gid: 329233048,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Литература"
     },
     "Английский_язык": {
       gid: 171674353,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Английский язык"
     },
     "Математика": {
       gid: 624656389,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Математика"
     },
     "Информатика": {
       gid: 1421083680,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Информатика"
     },
     "История": {
       gid: 801015494,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "История"
     },
     "Обществознание": {
       gid: 370783621,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Обществознание"
     },
     "География": {
       gid: 696023630,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "География"
     },
     "Биология": {
       gid: 611403980,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Биология"
     },
     "Физика": {
       gid: 340190869,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Физика"
     },
     "Химия": {
       gid: 1532686743,
-      range: "C3",
+      range: "C3:C180",
+      mode: "last",
       name: "Химия"
     }
   }
 };
 
-// Словарь синонимов предметов
+// --- Словарь синонимов предметов ---
 const SUBJECT_MAP = {
   'Английский язык': ['Англ.яз', 'Английский', 'English', 'Анг.яз', 'Англ', 'Анг'],
   'Физкультура': ['Физ-ра', 'Физическая культура', 'Физра', 'Физ-культура', 'Физ'],
