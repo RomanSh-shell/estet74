@@ -291,6 +291,10 @@ async function getGroupsList(dayIndex) {
 
 
 async function getSchedule(dayIndex, groupName) {
+
+  // Очищаем весь кеш перед загрузкой нового дня
+  requestCache.clear();
+
   if (dayIndex === 'all') return await getWeekSchedule(groupName);
   if (!groupName) throw new Error("Группа не указана");
 
