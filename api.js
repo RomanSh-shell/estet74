@@ -35,7 +35,7 @@ function parseCSV(text) {
     let currentRow = [];
     let currentCell = '';
     let inQuotes = false;
-    
+
     for (let i = 0; i < text.length; i++) {
         const char = text[i];
         const nextChar = text[i + 1];
@@ -43,7 +43,7 @@ function parseCSV(text) {
         if (char === '"') {
             if (inQuotes && nextChar === '"') {
                 currentCell += '"'; // Экранированная кавычка
-                i++; 
+                i++;
             } else {
                 inQuotes = !inQuotes;
             }
@@ -67,19 +67,19 @@ function parseCSV(text) {
     return rows;
 }
 
-function a2ToIndex(cell) {
+function a1ToIndex(cell) {
   if (typeof cell !== 'string' || cell.trim() === '') return null;
   const match = cell.match(/^([A-Z]+)(\d+)$/);
   if (!match) return null;
-  
+
   const colLetters = match[1];
   const rowNumber = parseInt(match[2], 10);
-  
+
   let colIndex = 0;
   for (let i = 0; i < colLetters.length; i++) {
     colIndex = colIndex * 26 + (colLetters.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
   }
-  
+
   return { row: rowNumber - 1, col: colIndex - 1 };
 }
 
@@ -119,12 +119,43 @@ async function getRange(sheetConfig, range, mode = null) {
 
   const processData = (data) => {
     if (!mode) return data;
+
     const flatData = (Array.isArray(data) ? data.flat(Infinity) : [data])
       .filter(cell => cell && String(cell).trim() !== '');
 
     if (flatData.length === 0) return '';
-    if (mode === 'first') return flatData[0];
-    if (mode === 'last') return flatData[flatData.length - 1];
+
+    // Проверяем, передан ли объект с searchText
+    // mode может быть: 'first', 'last', { type: 'first', searchText: '...' }, { type: 'last', searchText: '...' }
+    const modeType = typeof mode === 'string' ? mode : mode?.type;
+    const searchText = typeof mode === 'object' ? mode?.searchText : null;
+
+    if (modeType === 'first') {
+      if (searchText) {
+        // Ищем первую ячейку, содержащую searchText
+        const found = flatData.find(cell => 
+          String(cell).toLowerCase().includes(String(searchText).toLowerCase())
+        );
+        return found || '';
+      }
+      return flatData[0];
+    }
+
+    if (modeType === 'last') {
+      if (searchText) {
+        // Ищем последнюю ячейку, содержащую searchText
+        let found = '';
+        for (let i = flatData.length - 1; i >= 0; i--) {
+          if (String(flatData[i]).toLowerCase().includes(String(searchText).toLowerCase())) {
+            found = flatData[i];
+            break;
+          }
+        }
+        return found;
+      }
+      return flatData[flatData.length - 1];
+    }
+
     return data;
   };
 
@@ -144,11 +175,11 @@ async function getRange(sheetConfig, range, mode = null) {
 
       const data = await requestCache.get(cacheKey);
       let result = data.values || [];
-      
+
       // Логика одной колонки
       const rangeParts = range.split(':');
       const isSingleColumn = rangeParts[0].replace(/\d+/g, '') === (rangeParts[1] || '').replace(/\d+/g, '');
-      
+
       if (result.length > 0 && isSingleColumn) {
         result = result.map(row => row[0] || '');
       }
@@ -166,8 +197,8 @@ async function getRange(sheetConfig, range, mode = null) {
 
   try {
     const [startCell, endCell] = range.split(':');
-    const start = a2ToIndex(startCell);
-    const end = a2ToIndex(endCell || startCell);
+    const start = a1ToIndex(startCell);
+    const end = a1ToIndex(endCell || startCell);
 
     if (!start || !end) throw new Error('Неверный формат диапазона');
 
@@ -246,7 +277,7 @@ async function getGroupsList(dayIndex) {
         ]);
 
         return [
-            ...(topGroups || []), 
+            ...(topGroups || []),
             ...(bottomGroups || []),
             ...(middleGroups || [])
         ]
@@ -263,7 +294,7 @@ async function getSchedule(dayIndex, groupName) {
   if (dayIndex === 'all') return await getWeekSchedule(groupName);
   if (!groupName) throw new Error("Группа не указана");
 
-  // Обратите внимание: убедитесь, что переменная days доступна! 
+  // Обратите внимание: убедитесь, что переменная days доступна!
   // Если она в другом файле, всё ок.
   const dayConfig = (typeof days !== 'undefined') ? days[`day${dayIndex}`] : null;
   if (!dayConfig) return { schedule: [] }; // Защита от null
@@ -303,11 +334,11 @@ async function getSchedule(dayIndex, groupName) {
         }
 
         const column = String.fromCharCode(baseAscii + groupIndex);
-        
+
         // Б. УРОКИ
         const lessonsRange = `${column}${startRow}:${column}${endRow}`;
         const LESSONSandROOMS = await getRange(dayConfig, lessonsRange);
-        
+
         let firstlessonNUM = LESSONSandROOMS.findIndex(item => String(item || '').trim());
         let lastlessonNUM = -1;
         for (let i = LESSONSandROOMS.length - 1; i >= 0; i--) {
@@ -323,16 +354,16 @@ async function getSchedule(dayIndex, groupName) {
         processedLessons = processSubjects(relevantLessons, TIMES); 
 
         // Д. ДОМАШНЕЕ ЗАДАНИЕ (Исправленное создание ключа)
-        
+
         // 1. Нормализуем имя группы: "10 - 1" -> "10_1"
         // Заменяем любую последовательность не-цифр на одно подчеркивание
         let rawKey = groupName.toLowerCase().replace(/\D+/g, '_').replace(/^_|_$/g, '');
-        let groupKey = 'class' + rawKey; 
+        let groupKey = 'class' + rawKey;
 
         // ДИАГНОСТИКА ДЛЯ КОНСОЛИ
         console.log(`🔎 ДЗ: Ищу конфиг для группы "${groupName}" -> Ключ: "${groupKey}"`);
 
-        const classConfig = classes[groupKey]; 
+        const classConfig = classes[groupKey];
 
         if (classConfig) {
             const homeworkPromises = processedLessons.map(async lesson => {
@@ -341,7 +372,7 @@ async function getSchedule(dayIndex, groupName) {
 
                 const subjectNameOnly = lesson.subject.replace(/[\d\/\.\,\(\)\s]*$/, '').toLowerCase().trim();
                 const canonicalName = REVERSE_MAP_DATA.map[subjectNameOnly];
-                
+
                 let subjectConfig = null;
                 for (const key in classConfig) {
                     if (classConfig[key]?.name === canonicalName) {
@@ -353,15 +384,15 @@ async function getSchedule(dayIndex, groupName) {
                 if (subjectConfig?.range) {
                     try {
                         const fetchConfig = {
-                            id: classConfig.sheetId, 
+                            id: classConfig.sheetId,
                             api: classConfig.api,
-                            gid: subjectConfig.gid, 
+                            gid: subjectConfig.gid,
                             name: `${groupName} — ${subjectConfig.name} (ДЗ)`
                         };
-                        
+
                         const expandedRange = getNextColumn(subjectConfig.range);
                         const rawRows = await getRange(fetchConfig, expandedRange); // Ищем сразу и дату, и текст
-                        
+
                         if (Array.isArray(rawRows) && rawRows.length > 0) {
                             const validRows = rawRows.filter(row => row && row[0] && String(row[0]).trim() !== '');
                             if (validRows.length > 0) {
@@ -384,10 +415,10 @@ async function getSchedule(dayIndex, groupName) {
         } else {
              console.warn(`⚠️ ВНИМАНИЕ: В settings.js нет ключа "${groupKey}", поэтому ДЗ не грузится!`);
         }
-        
+
         // Е. ФИНАЛ
         const finalSchedule = processedLessons.map((lesson, index) => ({
-            lesson: index + 1, 
+            lesson: index + 1,
             time: String(TIMES[index] || '').trim(),
             subject: String(lesson.subject || '').trim(),
             room: String(lesson.room || '').trim(),
@@ -400,7 +431,7 @@ async function getSchedule(dayIndex, groupName) {
     } catch (error) {
       console.error(`Ошибка загрузки [${groupName}]:`, error.message);
       // Бросаем ошибку дальше, чтобы интерфейс понял, что надо включить failMode
-      throw error; 
+      throw error;
     }
 }
 
@@ -410,7 +441,7 @@ async function getWeekSchedule(groupName) {
   if (!groupName) return { weekSchedule: [] };
 
   for (let i = 0; i < daynames.length; i++) {
-    const dayData = await getSchedule(i, groupName); 
+    const dayData = await getSchedule(i, groupName);
     weekSchedule.push({
       dayName: daynames[i],
       schedule: dayData.schedule
