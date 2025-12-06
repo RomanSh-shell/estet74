@@ -194,70 +194,69 @@ async function getRange(sheetConfig, range, mode = null) {
   }
 
   // 2. Proxy (CSV)
-console.log(`Proxy запрос для [${logName}], диапазон: ${range}`);
+  console.log(`Proxy запрос для [${logName}], диапазон: ${range}`);
 
-try {
-  const [startCell, endCell] = range.split(':');
-  const start = a1ToIndex(startCell);
-  const end = a1ToIndex(endCell || startCell);
+  try {
+    const [startCell, endCell] = range.split(':');
+    const start = a1ToIndex(startCell);
+    const end = a1ToIndex(endCell || startCell);
 
-  if (!start || !end) throw new Error('Неверный формат диапазона');
+    if (!start || !end) throw new Error('Неверный формат диапазона');
 
-  const sheetCacheKey = `csv_${sheetConfig.id}_${sheetConfig.gid}_${range}`;
+    const sheetCacheKey = `csv_${sheetConfig.id}_${sheetConfig.gid}_${range}`;
 
-  if (!requestCache.has(sheetCacheKey)) {
-    const proxyUrl = `${WORKER_HOST}?id=${sheetConfig.id}&gid=${sheetConfig.gid}&range=${encodeURIComponent(range)}`;
+    if (!requestCache.has(sheetCacheKey)) {
+      const proxyUrl = `${WORKER_HOST}?id=${sheetConfig.id}&gid=${sheetConfig.gid}&range=${encodeURIComponent(range)}`;
 
-    console.log(`Запрос к Worker: ${proxyUrl}`);
+      console.log(`Запрос к Worker: ${proxyUrl}`);
 
-    const promise = fetch(proxyUrl, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'omit',
-      cache: 'no-cache',
-      referrerPolicy: 'no-referrer',
-      headers: {
-        'Accept': 'text/csv,application/json,*/*',
-      },
-    })
-      .then(res => {
-        if (!res.ok) throw new Error(`Ошибка Worker: ${res.status}`);
-        return res.text();
+      const promise = fetch(proxyUrl, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'omit',
+        cache: 'no-cache',
+        referrerPolicy: 'no-referrer',
+        headers: {
+          'Accept': 'text/csv,application/json,*/*',
+        },
       })
-      .then(text => parseCSV(text));
+        .then(res => {
+          if (!res.ok) throw new Error(`Ошибка Worker: ${res.status}`);
+          return res.text();
+        })
+        .then(text => parseCSV(text));
 
-    requestCache.set(sheetCacheKey, promise);
-    setTimeout(() => requestCache.delete(sheetCacheKey), 20000);
-  }
-
-  const rows = await requestCache.get(sheetCacheKey);
-
-  const result = [];
-  for (let r = start.row; r <= end.row; r++) {
-    if (r < rows.length) {
-      const rowData = [];
-      for (let c = start.col; c <= end.col; c++) {
-        rowData.push(rows[r][c] || '');
-      }
-      result.push(rowData);
+      requestCache.set(sheetCacheKey, promise);
+      setTimeout(() => requestCache.delete(sheetCacheKey), 20000);
     }
+
+    const rows = await requestCache.get(sheetCacheKey);
+
+    const result = [];
+    for (let r = start.row; r <= end.row; r++) {
+      if (r < rows.length) {
+        const rowData = [];
+        for (let c = start.col; c <= end.col; c++) {
+          rowData.push(rows[r][c] || '');
+        }
+        result.push(rowData);
+      }
+    }
+
+    let finalResult = result;
+    const isSingleRow = start.row === end.row;
+    const isSingleColumn = start.col === end.col;
+
+    if (isSingleColumn) finalResult = result.map(row => row[0] || '');
+    else if (isSingleRow) finalResult = result[0];
+
+    return processData(finalResult);
+
+  } catch (error) {
+    console.error(`Ошибка getRange [${logName}]:`, error);
+    throw error;
   }
-
-  let finalResult = result;
-  const isSingleRow = start.row === end.row;
-  const isSingleColumn = start.col === end.col;
-
-  if (isSingleColumn) finalResult = result.map(row => row[0] || '');
-  else if (isSingleRow) finalResult = result[0];
-
-  return processData(finalResult);
-
-} catch (error) {
-  console.error(`Ошибка getRange [${logName}]:`, error);
-  throw error;
 }
-
-
 
     // Ждем (или берем готовый) результат парсинга
     const rows = await requestCache.get(sheetCacheKey);
