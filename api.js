@@ -210,7 +210,7 @@ async function getRange(sheetConfig, range, mode = null) {
     if (!requestCache.has(sheetCacheKey)) {
 
       // Формируем запрос к воркеру с параметрами
-      const proxyUrl = `${WORKER_HOST}?id=${sheetConfig.id}&gid=${sheetConfig.gid}`;
+      const proxyUrl = `${WORKER_HOST}?id=${sheetConfig.id}&gid=${sheetConfig.gid}&range=${encodeURIComponent(range)}`;
 
       console.log(`Запрос к Worker: ${proxyUrl}`);
 
