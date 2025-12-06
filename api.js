@@ -193,7 +193,41 @@ async function getRange(sheetConfig, range, mode = null) {
     }
   }
 
-    console.log(`Proxy запрос для [${logName}], диапазон: ${range}`);
+   // 1. API (с кешированием)
+  if (sheetConfig.api) {
+    try {
+      const cacheKey = `api_${sheetConfig.id}_${range}`;
+      // Если запрос уже летит, возвращаем тот же промис
+      if (!requestCache.has(cacheKey)) {
+        const promise = fetch(
+          `https://sheets.googleapis.com/v4/spreadsheets/${sheetConfig.id}/values/${range}?key=${sheetConfig.api}`
+        ).then(res => res.ok ? res.json() : Promise.reject(res));
+        requestCache.set(cacheKey, promise);
+        // Удаляем из кеша через 10 сек, чтобы можно было обновить
+        setTimeout(() => requestCache.delete(cacheKey), 10000);
+      }
+
+      const data = await requestCache.get(cacheKey);
+      let result = data.values || [];
+
+      // Логика одной колонки
+      const rangeParts = range.split(':');
+      const isSingleColumn = rangeParts[0].replace(/\d+/g, '') === (rangeParts[1] || '').replace(/\d+/g, '');
+
+      if (result.length > 0 && isSingleColumn) {
+        result = result.map(row => row[0] || '');
+      }
+      return processData(result);
+
+    } catch (error) {
+      console.warn(`API сбой для [${logName}]:`, error);
+      // Если API упал, идем в Proxy, удалив ошибочный кеш
+      requestCache.delete(`api_${sheetConfig.id}_${range}`);
+    }
+  }
+
+  // 2. Proxy (CSV)
+  console.log(`Proxy запрос для [${logName}], диапазон: ${range}`);
 
   const [startCell, endCell] = range.split(':');
   const start = a1ToIndex(startCell);
@@ -253,36 +287,8 @@ async function getRange(sheetConfig, range, mode = null) {
   else if (isSingleRow) finalResult = result[0];
 
   return processData(finalResult);
+} 
 
-    // Ждем (или берем готовый) результат парсинга
-    const rows = await requestCache.get(sheetCacheKey);
-
-    // Вырезаем нужный диапазон из памяти
-    const result = [];
-    for (let r = start.row; r <= end.row; r++) {
-      if (r < rows.length) {
-        const rowData = [];
-        for (let c = start.col; c <= end.col; c++) {
-          rowData.push(rows[r][c] || '');
-        }
-        result.push(rowData);
-      }
-    }
-
-    let finalResult = result;
-    const isSingleRow = start.row === end.row;
-    const isSingleColumn = start.col === end.col;
-
-    if (isSingleColumn) finalResult = result.map(row => row[0] || '');
-    else if (isSingleRow) finalResult = result[0];
-
-    return processData(finalResult);
-
-  } catch (error) {
-    console.error(`Ошибка getRange [${logName}]:`, error);
-    throw error;
-  }
-}
 
 
 // --- ОСНОВНЫЕ ФУНКЦИИ ---
