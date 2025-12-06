@@ -203,29 +203,62 @@ async function getRange(sheetConfig, range, mode = null) {
 
     if (!start || !end) throw new Error('Неверный формат диапазона');
 
-    // КЛЮЧЕВОЕ УЛУЧШЕНИЕ: Кешируем весь лист целиком
-    // Мы качаем файл один раз, а потом режем из него куски
-    const sheetCacheKey = `csv_${sheetConfig.id}_${sheetConfig.gid}`;
+    // Кешируем по (id + gid + range), чтобы не путать разные диапазоны
+    const sheetCacheKey = `csv_${sheetConfig.id}_${sheetConfig.gid}_${range}`;
 
     if (!requestCache.has(sheetCacheKey)) {
-
-      // Формируем запрос к воркеру с параметрами
       const proxyUrl = `${WORKER_HOST}?id=${sheetConfig.id}&gid=${sheetConfig.gid}&range=${encodeURIComponent(range)}`;
 
       console.log(`Запрос к Worker: ${proxyUrl}`);
 
-      const promise = fetch(proxyUrl)
-      .then(res => {
+      const promise = fetch(proxyUrl, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'omit',
+        cache: 'no-cache',
+        referrerPolicy: 'no-referrer',
+        headers: {
+          'Accept': 'text/csv,application/json,*/*',
+        },
+      })
+        .then(res => {
           if (!res.ok) throw new Error(`Ошибка Worker: ${res.status}`);
           return res.text();
-      })
-      .then(text => parseCSV(text));
+        })
+        .then(text => parseCSV(text));
 
       requestCache.set(sheetCacheKey, promise);
-
-      // а этот нужен просто чтобы не дергать сеть при переключении вкладок браузера туда-сюда.
       setTimeout(() => requestCache.delete(sheetCacheKey), 20000);
+    }
+
+    const rows = await requestCache.get(sheetCacheKey);
+
+    const result = [];
+    for (let r = start.row; r <= end.row; r++) {
+      if (r < rows.length) {
+        const rowData = [];
+        for (let c = start.col; c <= end.col; c++) {
+          rowData.push(rows[r][c] || '');
+        }
+        result.push(rowData);
+      }
+    }
+
+    let finalResult = result;
+    const isSingleRow = start.row === end.row;
+    const isSingleColumn = start.col === end.col;
+
+    if (isSingleColumn) finalResult = result.map(row => row[0] || '');
+    else if (isSingleRow) finalResult = result[0];
+
+    return processData(finalResult);
+
+  } catch (error) {
+    console.error(`Ошибка getRange [${logName}]:`, error);
+    throw error;
   }
+}
+
 
     // Ждем (или берем готовый) результат парсинга
     const rows = await requestCache.get(sheetCacheKey);
