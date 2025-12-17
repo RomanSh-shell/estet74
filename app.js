@@ -1,130 +1,138 @@
-'use strict';
 ////////////////////app.js//////////////////////
-//      Получение и вывод данных. VUE.JS      //
+//      Получение и вывод данных. VUE 3       //
 ////////////////////////////////////////////////
 
-new Vue({
-  el: '#app',
-  
-  // --- СОСТОЯНИЕ ПРИЛОЖЕНИЯ ---
-  data: {
-    schedule: [],      // Данные для одного дня
-    weekSchedule: [],  // Данные для режима "Вся неделя"
-    GROUPS: [],        // Список доступных классов (загружается первым)
-    selectedGroup: '', // Текущий выбранный класс
-    
-    // Авто-выбор дня: Если сб/вс -> "Вся неделя", иначе текущий день недели (0-4)
-    selectedDay: (() => {
-        const todayIndex = new Date().getDay();
-        return String(todayIndex >= 1 && todayIndex <= 5 ? todayIndex - 1 : "all");
-    })(),
-    
-    loading: false,    // Индикатор загрузки (спиннер)
-    failMode: INITIAL_FAIL_MODE, // Режим "только ссылки" при ошибках
-    daysData: days,    // Из settings.js
-    classesData: classes // Из settings.js
-  },
-  
-  computed: {
-    isWeekView() {
-      return this.selectedDay === 'all';
-    }
-  },
-  
-  methods: {
-    /**
-     * ЭТАП 1: Инициализация списка групп.
-     * Загружается быстро, чтобы пользователь мог видеть интерфейс 
-     * и сменить класс, даже если расписание будет грузиться долго.
-     */
-    async initGroups() {
-      if (INITIAL_FAIL_MODE) return;
+const { createApp } = Vue;
 
-      try {
-          const groups = await getGroupsList(this.selectedDay);
-          // Если массив пуст — считаем это сбоем
-          if (!groups || groups.length === 0) {
-              console.warn("Группы не загрузились (пустой список). Включаю FailMode.");
-              this.failMode = true;
-              return;
-          }
+createApp({
+    data() {
+        return {
+            weekSchedule: [],  // Итоговый массив из 7 дней
+            GROUPS: [],        // Список доступных классов
+            selectedGroup: '', // Выбранный класс
+            loading: false,    // Спиннер
 
-          this.GROUPS = groups;
-
-          // Восстановление из куки
-          const cookieGroup = getCookie('selectedGroup');
-          if (cookieGroup && this.GROUPS.includes(cookieGroup)) {
-              this.selectedGroup = cookieGroup;
-          } else {
-              this.selectedGroup = this.GROUPS[0];
-          }
-      } catch (e) {
-          console.error("App: Ошибка инициализации групп", e);
-          this.failMode = true;
-      }
-  },
-
-    /**
-     * ЭТАП 2: Загрузка основного расписания.
-     * Выполняется после initGroups или при смене фильтров.
-     */
-    async loadSchedule() {
-      if (!this.selectedGroup) return; // Нечего грузить
-
-      this.loading = true;
-
-      // Ручной режим ошибки (если включен в settings.js)
-      if (INITIAL_FAIL_MODE) { 
-          this.failMode = true;
-          this.loading = false;
-          return;
-      }
-      
-      // Запоминаем выбор пользователя на будущее
-      setCookie('selectedGroup', this.selectedGroup, 365);
-      
-      try {
-        // Вызываем "тяжелую" функцию из api.js, передавая ВЫБРАННУЮ группу
-        const data = await getSchedule(
-            this.selectedDay === 'all' ? 'all' : parseInt(this.selectedDay),
-            this.selectedGroup
-        );
-
-        // Распределяем данные в зависимости от режима просмотра
-        if (this.selectedDay === 'all') {
-          this.weekSchedule = data.weekSchedule || [];
-          this.schedule = [];
-        } else {
-          this.schedule = data.schedule || [];
-          this.weekSchedule = [];
+            // Данные для фолбэка (из settings.js)
+            daysData: typeof days !== 'undefined' ? days : {},
+            classesData: typeof classes !== 'undefined' ? classes : {}
         }
-        
-        this.failMode = false; // Успех!
-
-      } catch (error) {
-        console.error('App: Ошибка загрузки расписания:', error);
-        this.failMode = true; // Включаем запасной интерфейс со ссылками
-      } finally {
-        this.loading = false;
-      }
     },
-    
-    // Обработчик смены дня в выпадающем списке (можно добавить доп. логику если надо)
-    handleDayChange() {
-        this.loadSchedule();
+
+    methods: {
+        /**
+         * 1. Инициализация списка групп
+         */
+        async initGroups() {
+            if (typeof INITIAL_FAIL_MODE !== 'undefined' && INITIAL_FAIL_MODE) return;
+
+            try {
+                // Грузим группы из "понедельника" (day0), так как списки везде одинаковые
+                const groups = await getGroupsList(0);
+
+                if (!groups || groups.length === 0) {
+                    console.warn("Группы не загрузились.");
+                    return;
+                }
+
+                this.GROUPS = groups;
+
+                // Восстановление из куки
+                const cookieGroup = getCookie('selectedGroup');
+                if (cookieGroup && this.GROUPS.includes(cookieGroup)) {
+                    this.selectedGroup = cookieGroup;
+                } else {
+                    this.selectedGroup = this.GROUPS[0];
+                }
+            } catch (e) {
+                console.error("Ошибка инициализации групп", e);
+            }
+        },
+
+        /**
+         * 2. Основная функция загрузки (7 дней подряд)
+         */
+        async loadSchedule() {
+            if (!this.selectedGroup) return;
+
+            this.loading = true;
+            this.weekSchedule = []; // Очищаем перед загрузкой
+
+            // Сохраняем выбор
+            setCookie('selectedGroup', this.selectedGroup, 365);
+
+            try {
+                // Генерируем структуру недели (даты, имена дней)
+                const rollingWeek = this.generateDates();
+
+                // Создаем массив промисов для параллельной загрузки
+                const loadPromises = rollingWeek.map(async (dayObj) => {
+                    // dayObj.sheetIndex: 0=Пн, 1=Вт ... 4=Пт, -1=Выходной
+                    if (dayObj.sheetIndex >= 0 && dayObj.sheetIndex <= 4) {
+                        try {
+                            const data = await getSchedule(dayObj.sheetIndex, this.selectedGroup);
+                            dayObj.schedule = data.schedule || [];
+                        } catch (e) {
+                            console.warn(`Не удалось загрузить данные для ${dayObj.dayName}`);
+                            dayObj.schedule = [];
+                        }
+                    } else {
+                        // Выходной
+                        dayObj.schedule = [];
+                    }
+                    return dayObj;
+                });
+
+                // Ждем выполнения всех запросов
+                this.weekSchedule = await Promise.all(loadPromises);
+
+            } catch (error) {
+                console.error('App: Критическая ошибка загрузки:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        /**
+         * Утилита: Генерация массива дат на 7 дней вперед
+         */
+        generateDates() {
+            const result = [];
+            const today = new Date();
+
+            const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+            //const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+
+            for (let i = 0; i < 7; i++) {
+                // Создаем копию даты и сдвигаем на i дней
+                const currentDate = new Date(today);
+                currentDate.setDate(today.getDate() + i);
+
+                const jsDay = currentDate.getDay(); // 0 (Вс) ... 6 (Сб)
+                const dateNum = currentDate.getDate();
+                //const monthName = monthNames[currentDate.getMonth()];
+
+                // Преобразуем JS день недели в индекс таблицы (0=Пн...4=Пт)
+                // Вс(0) -> -1, Сб(6) -> -1
+                let sheetIndex = -1;
+                if (jsDay >= 1 && jsDay <= 5) {
+                    sheetIndex = jsDay - 1; // Пн(1)->0, Вт(2)->1 ...
+                }
+
+                result.push({
+                    dayName: dayNames[jsDay],       // "Понедельник"
+                    day: dateNum,                   // "13"
+                    sheetIndex: sheetIndex,         // Индекс для запроса к API
+                    schedule: []                    // Сюда потом положим уроки
+                });
+            }
+            return result;
+        }
+    },
+
+    async mounted() {
+        await this.initGroups();
+        if (this.selectedGroup) {
+            this.loadSchedule();
+        }
     }
-  },
-  
-  /**
-   * ЖИЗНЕННЫЙ ЦИКЛ: При запуске приложения
-   */
-  async mounted() {
-    // 1. Сначала ждем загрузки списка классов
-    await this.initGroups();
-    
-    // 2. Только если классы загрузились и выбран один из них — качаем расписание
-    if (this.selectedGroup) {
-        this.loadSchedule();
-    }
-  }
-});
+}).mount('#app');

@@ -1,158 +1,166 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Расписание и домашнее задание</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Расписание занятий | Эстет-центр</title>
+    <meta name="description" content="Актуальное расписание уроков и занятий в частной школе Эстет-центр в Челябинске. Следите за изменениями в расписании на нашем сайте.">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <link rel="stylesheet" href="libs/bs/bootstrap-grid-3.3.1.min.css">
+    <link rel="stylesheet" href="libs/fa/css/font-awesome.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="style.css"> <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700&amp;display=swap&amp;subset=cyrillic" rel="stylesheet"> 
+    
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
 </head>
 <body>
-    <div id="app">
+    <div class="mainBG"></div>
+    
+    <div class="header">
         <div class="container">
-            <header>
-                <h1><i class="fas fa-calendar-alt"></i> Электронный дневник</h1>
-                <div class="subtitle">Просмотр расписания и домашних заданий</div>
-            </header>
-
-            <div class="filters-row">
-                <div class="filter-group">
-                    <label for="group"><i class="fas fa-users"></i> Класс:</label>
-                    <select id="group" v-model="selectedGroup" @change="loadSchedule">
-                        <option v-for="group in GROUPS" :value="group" :key="group">
-                            {{ group }}
-                        </option>
-                    </select>
+            <div class="row row-flex">
+                <div class="col-xs-12 col-md-4 vh-center pd15 hidden-xs">
+                    <center>Первая<br>Частнаяшкола<br>г. Челябинска</center>
                 </div>
-
-                <div class="filter-group">
-                    <label for="day"><i class="fas fa-calendar-day"></i> День:</label>
-                    <select id="day" v-model="selectedDay" @change="loadSchedule">
-                        <option value="0">Понедельник</option>
-                        <option value="1">Вторник</option>
-                        <option value="2">Среда</option>
-                        <option value="3">Четверг</option>
-                        <option value="4">Пятница</option>
-                        <option value="all">Вся неделя</option>
-                    </select>
+                <div class="col-xs-12 col-md-4 vh-center pd15">
+                    <a href=""><img src="/images/logo.webp"></a>
+                </div>
+                <div class="col-xs-12 col-md-4 vh-center pd15">
+                    +7 (351) 223 85 35
                 </div>
             </div>
+            <div class="header-menu-wrapper hidden-xs">
+                <ul class="header-menu">
+                    <li><a href="">Главная</a></li>
+                    <li><a>О Нас</a>
+                        <ul class="header-menu-sub">
+                            <li><a href="news/">Новости и события</a></li>
+                            <li><a href="about/">О Школе</a></li>
+                            <li><a href="teachers/">Наши Учителя</a></li>
+                            <li><a href="nasha-istoriya/">История</a></li>
+                            <li><a href="faq/">Вопросы и ответы</a></li>
+                            <li><a href="contact-us/">Контактная информация</a></li>
+                        </ul>
+                    </li>
+                    <li><a>Родителям</a>
+                        <ul class="header-menu-sub">
+                            <li><a href="sovety-roditelyam/">Советы Родителям</a></li>
+                            <li><a href="mesta-v-klassah/">Наполняемость классов</a></li>
+                            <li><a href="dokumenty-dlya-postupleniya/">Документы для поступления</a></li>
+                            <li><a href="spiski-uchebnikov/">Списки Учебников</a></li>
+                            <li><a href="zapisat-rebenka/">Записать ребенка</a></li>
+                        </ul>
+                    </li>
+                    <li><a>Ученикам</a>
+                        <ul class="header-menu-sub">
+                            <li><a href="raspisanie/">Расписание уроков</a></li>
+                            <li><a href="gia/">ГИА</a></li>
+                            <li><a href="https://estet74-my.sharepoint.com/:w:/g/personal/admin_estet74_ru/EU9Ba7YDJhpDjRdXJWkA4qsBOXlgHTJEglLbiHj-CshY8w?e=FuC2Nu" target="_blank">Методичка по ПД</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="nashi-uslugi/">Наши услуги</a></li>
+                    <li><a href="stranichka-psihologa/">Страничка психолога</a></li>
+                    <li><a href="https://sgo.edu-74.ru/authorize/login" target="_blank">Электронный журнал</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
-            <div class="content">
-                <div class="section-title">
-                    <i class="fas fa-clock"></i> Расписание уроков и домашние задания
+    <div class="content" id="app">
+        <div class="container" style="padding-bottom: 20px;">
+            <div class="row">
+                <div class="col-md-12 pd15">
+                    <h1><strong>Расписание и задания</strong></h1>
                 </div>
 
-                <div v-if="loading" class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Загрузка...
+                <div class="col-md-12 pd15">
+                    <div class="filters-row">
+                        <h2><select id="group" v-model="selectedGroup" @change="loadSchedule">
+                            <option v-for="group in GROUPS" :value="group" :key="group">{{ group }}</option>
+                        </select></h2>
+                    </div>
                 </div>
 
-                <table class="schedule-table" v-else-if="!isWeekView && schedule.length > 0">
-                    <thead>
-                        <tr>
-                            <th>Урок</th>
-                            <th>Время</th>
-                            <th>Предмет</th>
-                            <th>Кабинет</th>
-                            <th>Домашнее задание</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="lesson in schedule" :key="lesson.lesson" :class="{ 'empty-lesson': !lesson.subject }">
-                            <td>{{ lesson.lesson }}</td>
-                            <td class="lesson-time">{{ lesson.time }}</td>
-                            <td>
-                                <div class="lesson-subject" v-if="lesson.subject">
-                                    {{ lesson.subject }}
-                                    <span v-if="lesson.metadata" class="lesson-metadata">({{ lesson.metadata }})</span>
+                <div class="col-md-12 pd15">
+                    <div v-if="loading" class="loading">
+                        <i class="fa fa-spinner fa-spin"></i> Загрузка расписания...
+                    </div>
+
+                    <div v-else-if="weekSchedule.length > 0">
+                        <div v-for="(day, index) in weekSchedule" :key="index" class="day-block">
+                            <h2 class="day-title">{{ day.dayName }}, {{ day.day }}</h>
+                            <table class="schedule-table">
+                                <tbody>
+                                    <tr v-for="lesson in day.schedule" :key="lesson.lesson" :class="{ 'empty-lesson': !lesson.subject }">
+                                        <td class="lesson-time">{{ lesson.time }}</td>
+                                        <td class="lesson-main-info">
+                                            <div v-if="lesson.subject" v-html="lesson.subject" class="lesson-content"></div>
+                                            <span v-else style="color:#999">Окно</span>
+                                        </td>
+                                        <td>
+                                            <div class="hometask" v-if="lesson.hometask">{{ lesson.hometask }}</div>
+                                            <span v-else style="color:#999">—</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div v-else class="fallback-interface">
+                        <div class="col-md-12 pd0 index-menu">
+                            <p style="margin-bottom: 15px;">Автоматическое расписание недоступно. Используйте прямые ссылки:</p>
+                            <a v-for="(dayData, key) in daysData" :key="key" target="_blank" :href="'https://docs.google.com/spreadsheets/d/' + dayData.id">
+                                <div class="col-md-4 vh-center">
+                                    {{ dayData.name ? dayData.name.replace('Расписание на ', '') : 'День' }}
                                 </div>
-                                <span v-else style="color: #999; font-style: italic;">Окно</span>
-                            </td>
-                            <td class="lesson-room">{{ lesson.room }}</td>
-                            <td>
-                                <div class="hometask" v-if="lesson.hometask">
-                                    {{ lesson.hometask }}
-                                </div>
-                                <span v-else style="color: #999; font-style: italic;">Не задано</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div v-else-if="isWeekView && weekSchedule.length > 0" class="week-view">
-                    <div v-for="day in weekSchedule" :key="day.dayName" class="day-block">
-                        <h3 class="day-title">{{ day.dayName }}</h3>
-                        <table class="schedule-table" v-if="day.schedule.length > 0">
-                            <thead>
-                                <tr>
-                                    <th>Урок</th>
-                                    <th>Время</th>
-                                    <th>Предмет</th>
-                                    <th>Кабинет</th>
-                                    <th>Домашнее задание</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="lesson in day.schedule" :key="lesson.lesson" :class="{ 'empty-lesson': !lesson.subject }">
-                                    <td>{{ lesson.lesson }}</td>
-                                    <td class="lesson-time">{{ lesson.time }}</td>
-                                    <td>
-                                        <div class="lesson-subject" v-if="lesson.subject">
-                                            {{ lesson.subject }}
-                                            <span v-if="lesson.metadata" class="lesson-metadata">({{ lesson.metadata }})</span>
-                                        </div>
-                                        <span v-else style="color: #999; font-style: italic;">Окно</span>
-                                    </td>
-                                    <td class="lesson-room">{{ lesson.room }}</td>
-                                    <td>
-                                        <div class="hometask" v-if="lesson.hometask">
-                                            {{ lesson.hometask }}
-                                        </div>
-                                        <span v-else style="color: #999; font-style: italic;">Не задано</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div v-else class="no-data">Уроков нет</div>
-                    </div>
-                </div>
-
-                <div v-else class="fallback-interface">
-                    <div class="row">
-                        <div class="col-md-12 pd15">
-                            <h2><strong>Расписание уроков</strong></h2>
-                        </div>
-                        <div class="col-md-12 pd15">
-                            <div class="index-menu">
-                                <a v-for="(dayData, key) in daysData" :key="key" target="_blank" :href="'https://docs.google.com/spreadsheets/d/' + dayData.id + '/edit'">
-                                    <div class="vh-center">{{ dayData.name ? dayData.name.replace('Расписание на ', '') : 'День' }}</div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-12 pd15">
-                            В расписании возможны изменения день в день по независящим от администрации причинам.
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12 pd15">
-                            <h2><strong>Домашние задания</strong></h2>
-                        </div>
-                        <div class="col-md-12 pd15">
-                            <div class="index-menu">
-                                <a v-for="(classData, key) in classesData" :key="key" target="_blank" :href="'https://docs.google.com/spreadsheets/d/' + classData.sheetId">
-                                    <div class="vh-center">{{ key.replace('class', '').replace('_', '-') }}</div>
-                                </a>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-            </div> <footer>
-                <p>Система электронного дневника © 2024</p>
-            </footer>
-        </div> </div> <script src="settings.js"></script>
+                <div class="col-md-12 pd15" style="margin-top: 20px; font-size: 14px; opacity: 0.8;">
+                    В расписании возможны изменения день в день по независящим от администрации причинам.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <center>
+                        <p style="font-size: 18px; padding-bottom: 15px;">г. Челябинск, пр-т Комсомольский, 36В. <span class="footer-phone">тел. +7 (351) 223 85 35.</span></p>
+                        © 2021 Частное Общеобразовательное Учреждение „Средняя Общеобразовательная Школа «Эстет-центр М»“. <span><a href="http://vk.com/club11619915" target="_blank"><i class="fa fa-vk"></i></a></span>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-menu-button"><i class="fa fa-bars"></i></div>
+    <div class="m-menu">
+        <ul>
+            <li><a>О Нас <i class="fa fa-angle-right"></i></a>
+                <ul class="m-menu-sub">
+                    <li><a href="news/">Новости и события</a></li>
+                    <li><a href="about/">О Школе</a></li>
+                    <li><a href="teachers/">Наши Учителя</a></li>
+                </ul>
+            </li>
+            <li><a href="raspisanie/">Расписание уроков</a></li>
+            <li><a href="dz/">Домашние задания</a></li>
+            <li><a href="https://sgo.edu-74.ru/authorize/login" target="_blank">Электронный журнал</a></li>
+        </ul>
+    </div>
+
+    <script src="/libs/jquery-3.2.1.min.js"></script>
+    <script src="/libs/common.js"></script>
+
+    <script src="settings.js"></script>
     <script src="parser.js"></script>
     <script src="api.js"></script>
     <script src="app.js"></script>

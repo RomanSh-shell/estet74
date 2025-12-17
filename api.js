@@ -1,4 +1,3 @@
-'use strict';
 ////////////////////api.js//////////////////////
 //     Получение данных из таблиц и куки      //
 ////////////////////////////////////////////////
@@ -134,7 +133,7 @@ async function getRange(sheetConfig, range, mode = null) {
     if (modeType === 'first') {
       if (searchText) {
         // Ищем первую ячейку, содержащую searchText
-        const found = flatData.find(cell => 
+        const found = flatData.find(cell =>
           String(cell).toLowerCase().includes(String(searchText).toLowerCase())
         );
         return found || '';
@@ -160,57 +159,30 @@ async function getRange(sheetConfig, range, mode = null) {
     return data;
   };
 
-  // 1. API (с кешированием)
+// 1. API (с кешированием)
   if (sheetConfig.api) {
     try {
       const cacheKey = `api_${sheetConfig.id}_${range}`;
-      // Если запрос уже летит, возвращаем тот же промис
       if (!requestCache.has(cacheKey)) {
-          const promise = fetch(
-            `https://sheets.googleapis.com/v4/spreadsheets/${sheetConfig.id}/values/${range}?key=${sheetConfig.api}`
-          ).then(res => res.ok ? res.json() : Promise.reject(res));
-          requestCache.set(cacheKey, promise);
-          // Удаляем из кеша через 10 сек, чтобы можно было обновить
-          setTimeout(() => requestCache.delete(cacheKey), 10000);
-      }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 сек таймаут
 
-      const data = await requestCache.get(cacheKey);
-      let result = data.values || [];
-
-      // Логика одной колонки
-      const rangeParts = range.split(':');
-      const isSingleColumn = rangeParts[0].replace(/\d+/g, '') === (rangeParts[1] || '').replace(/\d+/g, '');
-
-      if (result.length > 0 && isSingleColumn) {
-        result = result.map(row => row[0] || '');
-      }
-      return processData(result);
-
-    } catch (error) {
-      console.warn(`API сбой для [${logName}]:`, error);
-      // Если API упал, идем в Proxy, удалив ошибочный кеш
-      requestCache.delete(`api_${sheetConfig.id}_${range}`);
-    }
-  }
-
-   // 1. API (с кешированием)
-  if (sheetConfig.api) {
-    try {
-      const cacheKey = `api_${sheetConfig.id}_${range}`;
-      // Если запрос уже летит, возвращаем тот же промис
-      if (!requestCache.has(cacheKey)) {
         const promise = fetch(
-          `https://sheets.googleapis.com/v4/spreadsheets/${sheetConfig.id}/values/${range}?key=${sheetConfig.api}`
-        ).then(res => res.ok ? res.json() : Promise.reject(res));
+          `https://sheets.googleapis.com/v4/spreadsheets/${sheetConfig.id}/values/${range}?key=${sheetConfig.api}`,
+          { signal: controller.signal }
+        )
+        .then(res => {
+          clearTimeout(timeoutId);
+          return res.ok ? res.json() : Promise.reject(res);
+        });
+
         requestCache.set(cacheKey, promise);
-        // Удаляем из кеша через 10 сек, чтобы можно было обновить
         setTimeout(() => requestCache.delete(cacheKey), 10000);
       }
 
       const data = await requestCache.get(cacheKey);
       let result = data.values || [];
 
-      // Логика одной колонки
       const rangeParts = range.split(':');
       const isSingleColumn = rangeParts[0].replace(/\d+/g, '') === (rangeParts[1] || '').replace(/\d+/g, '');
 
@@ -221,7 +193,6 @@ async function getRange(sheetConfig, range, mode = null) {
 
     } catch (error) {
       console.warn(`API сбой для [${logName}]:`, error);
-      // Если API упал, идем в Proxy, удалив ошибочный кеш
       requestCache.delete(`api_${sheetConfig.id}_${range}`);
     }
   }
@@ -229,66 +200,88 @@ async function getRange(sheetConfig, range, mode = null) {
   // 2. Proxy (CSV)
   console.log(`Proxy запрос для [${logName}], диапазон: ${range}`);
 
-  const [startCell, endCell] = range.split(':');
-  const start = a1ToIndex(startCell);
-  const end = a1ToIndex(endCell || startCell);
+  try {
+    const [startCell, endCell] = range.split(':');
+    const start = a1ToIndex(startCell);
+    const end = a1ToIndex(endCell || startCell);
 
-  if (!start || !end) {
-    console.error('Неверный формат диапазона:', range);
-    return processData([]);
-  }
+    if (!start || !end) throw new Error('Неверный формат диапазона');
 
-  // Ключ кеша: учитываем и диапазон тоже
-  const sheetCacheKey = `csv_${sheetConfig.id}_${sheetConfig.gid}_${range}`;
+    const sheetCacheKey = `csv_${sheetConfig.id}_${sheetConfig.gid}`;
 
-  if (!requestCache.has(sheetCacheKey)) {
-    const proxyUrl = `${WORKER_HOST}?id=${sheetConfig.id}&gid=${sheetConfig.gid}&range=${encodeURIComponent(range)}`;
+    if (!requestCache.has(sheetCacheKey)) {
+      let response;
+      let usedFallback = false;
 
-    console.log(`Запрос к Worker: ${proxyUrl}`);
+      try {
+        // Сначала пробуем Worker с таймаутом
+        if (USE_WORKER) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 сек таймаут
 
-    const promise = fetch(proxyUrl, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'omit',
-      cache: 'no-cache',
-      referrerPolicy: 'no-referrer',
-      headers: {
-        'Accept': 'text/csv,application/json,*/*',
-      },
-    })
-      .then(res => {
-        if (!res.ok) throw new Error(`Ошибка Worker: ${res.status}`);
-        return res.text();
-      })
-      .then(text => parseCSV(text));
+          const proxyUrl = `${WORKER_HOST}?id=${sheetConfig.id}&gid=${sheetConfig.gid}`;
+          console.log(`Запрос к Worker: ${proxyUrl}`);
 
-    requestCache.set(sheetCacheKey, promise);
-    setTimeout(() => requestCache.delete(sheetCacheKey), 20000);
-  }
+          response = await fetch(proxyUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
+        }
+      } catch (workerError) {
+        // Если Worker завис или упал, переходим на запасной прокси
+        if (USE_PROXY) {
+          console.warn(`Worker не ответил (${workerError.message}), использую резервный прокси`);
+          usedFallback = true;
 
-  const rows = await requestCache.get(sheetCacheKey);
+          const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetConfig.id}/export?format=csv&gid=${sheetConfig.gid}`;
+          const fallbackProxyUrl = `${PROXY_URL}${encodeURIComponent(csvUrl)}`;
+          console.log(`Запрос к резервному прокси: ${fallbackProxyUrl}`);
 
-  const result = [];
-  for (let r = start.row; r <= end.row; r++) {
-    if (r < rows.length) {
-      const rowData = [];
-      for (let c = start.col; c <= end.col; c++) {
-        rowData.push(rows[r][c] || '');
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+          response = await fetch(fallbackProxyUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
+        }
       }
-      result.push(rowData);
+
+      if (!response.ok) throw new Error(`Ошибка ${usedFallback ? 'резервного прокси' : 'Worker'}: ${response.status}`);
+
+      const csvText = await response.text();
+      const promise = Promise.resolve(parseCSV(csvText));
+
+      requestCache.set(sheetCacheKey, promise);
+      setTimeout(() => requestCache.delete(sheetCacheKey), 20000);
     }
+
+    // Ждем или берем готовый результат парсинга
+    const rows = await requestCache.get(sheetCacheKey);
+
+    // Вырезаем нужный диапазон из памяти
+    const result = [];
+    for (let r = start.row; r <= end.row; r++) {
+      if (r < rows.length) {
+        const rowData = [];
+        for (let c = start.col; c <= end.col; c++) {
+          rowData.push(rows[r][c] || '');
+        }
+        result.push(rowData);
+      }
+    }
+
+    let finalResult = result;
+    const isSingleRow = start.row === end.row;
+    const isSingleColumn = start.col === end.col;
+
+    if (isSingleColumn) finalResult = result.map(row => row[0] || '');
+    else if (isSingleRow) finalResult = result[0];
+
+    return processData(finalResult);
+
+  } catch (error) {
+    console.error(`Ошибка getRange [${logName}]:`, error);
+    throw error;
   }
 
-  let finalResult = result;
-  const isSingleRow = start.row === end.row;
-  const isSingleColumn = start.col === end.col;
-
-  if (isSingleColumn) finalResult = result.map(row => row[0] || '');
-  else if (isSingleRow) finalResult = result[0];
-
-  return processData(finalResult);
-} 
-
+}
 
 
 // --- ОСНОВНЫЕ ФУНКЦИИ ---
@@ -301,9 +294,8 @@ async function getGroupsList(dayIndex) {
 
     try {
         // ПАРАЛЛЕЛЬНЫЙ ЗАПУСК (Promise.all)
-        // Благодаря кешированию выше, первый запрос начнет скачивание CSV,
+        // Благодаря кешированиюc выше, первый запрос начнет скачивание CSV,
         // а остальные два просто "подцепятся" к этому же процессу.
-        // Экономия трафика: 3x. Ускорение: 3x.
         const [topGroups, bottomGroups, middleGroups] = await Promise.all([
             getRange(dayConfig, 'D4:AZ4'),
             getRange(dayConfig, 'D28:AZ28'),
@@ -325,15 +317,8 @@ async function getGroupsList(dayIndex) {
 
 
 async function getSchedule(dayIndex, groupName) {
-
-  // Очищаем весь кеш перед загрузкой нового дня
-  requestCache.clear();
-
-  if (dayIndex === 'all') return await getWeekSchedule(groupName);
   if (!groupName) throw new Error("Группа не указана");
 
-  // Обратите внимание: убедитесь, что переменная days доступна!
-  // Если она в другом файле, всё ок.
   const dayConfig = (typeof days !== 'undefined') ? days[`day${dayIndex}`] : null;
   if (!dayConfig) return { schedule: [] }; // Защита от null
 
@@ -388,12 +373,12 @@ async function getSchedule(dayIndex, groupName) {
         if (firstlessonNUM === -1 || lastlessonNUM === -1) return { schedule: [] };
 
         TIMES = await getRange(dayConfig, `C${startRow + firstlessonNUM}:C${startRow + lastlessonNUM}`);
-        const relevantLessons = LESSONSandROOMS.slice(firstlessonNUM, lastlessonNUM + 1); 
-        processedLessons = processSubjects(relevantLessons, TIMES); 
+        const relevantLessons = LESSONSandROOMS.slice(firstlessonNUM, lastlessonNUM + 1);
+        processedLessons = processSubjects(relevantLessons, TIMES);
 
         // Д. ДОМАШНЕЕ ЗАДАНИЕ (Исправленное создание ключа)
 
-        // 1. Нормализуем имя группы: "10 - 1" -> "10_1"
+        // 1. Нормализуем имя группы: "10-1" -> "10_1"
         // Заменяем любую последовательность не-цифр на одно подчеркивание
         let rawKey = groupName.toLowerCase().replace(/\D+/g, '_').replace(/^_|_$/g, '');
         let groupKey = 'class' + rawKey;
@@ -455,14 +440,30 @@ async function getSchedule(dayIndex, groupName) {
         }
 
         // Е. ФИНАЛ
-        const finalSchedule = processedLessons.map((lesson, index) => ({
-            lesson: index + 1,
-            time: String(TIMES[index] || '').trim(),
-            subject: String(lesson.subject || '').trim(),
-            room: String(lesson.room || '').trim(),
-            metadata: String(lesson.metadata || '').trim(),
-            hometask: lesson.hometask?.task || lesson.hometask?.metadata || ''
-      }));
+        const finalSchedule = processedLessons.map((lesson, index) => {
+          const subjectName = String(lesson.subject || '').trim();
+          const roomNumber = String(lesson.room || '').trim();
+          const metadataText = String(lesson.metadata || '').trim();
+
+          // Собираем HTML: Название + пробел + кабинет в спане
+          let subjectHtml = `<span class="lesson-name">${subjectName}</span>`;
+
+          if (roomNumber) {
+              subjectHtml += ` <span class="lesson-room">${roomNumber}</span>`;
+          }
+
+          // Добавляем метаданные через <br>, если они есть
+          if (metadataText) {
+              subjectHtml += `<br><span class="lesson-metadata">${metadataText}</span>`;
+          }
+
+          return {
+              lesson: index + 1,
+              time: String(TIMES[index] || '').trim(),
+              subject: subjectHtml, // Теперь тут лежит готовый HTML
+              hometask: lesson.hometask?.task || lesson.hometask?.metadata || ''
+          };
+      });
 
       return { schedule: finalSchedule };
 
@@ -471,19 +472,4 @@ async function getSchedule(dayIndex, groupName) {
       // Бросаем ошибку дальше, чтобы интерфейс понял, что надо включить failMode
       throw error;
     }
-}
-
-async function getWeekSchedule(groupName) {
-  const weekSchedule = [];
-  const daynames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
-  if (!groupName) return { weekSchedule: [] };
-
-  for (let i = 0; i < daynames.length; i++) {
-    const dayData = await getSchedule(i, groupName);
-    weekSchedule.push({
-      dayName: daynames[i],
-      schedule: dayData.schedule
-    });
-  }
-  return { weekSchedule };
 }

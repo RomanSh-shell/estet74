@@ -2,9 +2,11 @@
 // Все настройки модуля, Списки таблиц и предметов //
 /////////////////////////////////////////////////////
 
-// --- НАСТРОЙКИ CLOUDFLARE WORKER ---
-// Вставьте сюда ссылку, которую даёт Cloudflare после деплоя
-const WORKER_HOST = "https://estet74-proxy.coneco-neco.workers.dev/";
+// --- НАСТРОЙКИ АВАРИЙНОГО ОБХОДА API ---
+const WORKER_HOST = "https://estet74-proxy.coneco-neco.workers.dev/"; // Cсылка на worker, которую даёт Cloudflare после деплоя
+const PROXY_URL = "https://api.allorigins.win/raw?url="; // Cсылка на proxy, используется при проблемах с worker
+const USE_WORKER = true;
+const USE_PROXY = false; // прокси отключён
 
 // Это "Упрощенный режим" или режим ошибки.
 const INITIAL_FAIL_MODE = false; // <-- Если здесь true, возвращаем ручной выбор гугл-таблиц
@@ -40,7 +42,7 @@ const days = {
     id: '1_m0C3uWV3XvPLAko0KZSJWq5JMMHe8HH',
     api: '',
     gid: '1260478207'
-  }
+  },
 };
 
 const classes = {
